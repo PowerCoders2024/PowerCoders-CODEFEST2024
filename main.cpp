@@ -23,7 +23,7 @@
 #include <wolfssl/wolfcrypt/pwdbased.h>
 
 // Variables
-const size_t block_size = 1024 * 1024;
+const size_t block_size = 1024 * 1024; // 1mb
 
 // Declaraciones de funciones
 void encrypt(const std::string &input_path, const std::string &output_path);
