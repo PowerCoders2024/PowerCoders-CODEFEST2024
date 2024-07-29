@@ -29,8 +29,10 @@ public:
     // Setters
     void setKeySession(ecc_key userPub) ;
     // Functions
-    void encryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
-    void decryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
+    void encryptMessage(byte key[], const std::string &input_path, byte** cipher, size_t* cipher_size,
+        byte** authTag,size_t* authTagSz , byte** authIn,  size_t* authInSz);
+    void decryptMessage(byte key[],  byte* cipher, size_t ciphSzs, byte* authTag, size_t authTagSz,
+        byte* authIn,  size_t authInSz);
 
 };
 

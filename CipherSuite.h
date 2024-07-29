@@ -28,10 +28,11 @@ public:
     // Constructor
     CipherSuite();
     // CipherFunctions
-     void encryptAES(byte key[], const std::string& input_path, const std::string& output_path);
-    void decryptAES(byte key[], const std::string& input_path, const std::string& output_path);
+    void encryptAES(byte key[], const std::string& input_path);
+    void decryptAES(byte key[], byte* cipher, size_t ciphSzs,  byte* authTag, size_t authTagSz,byte* authIn, size_t authInSz);
     void keyGenerator(ecc_key& key);
     void pskEngine();
+
 };
 
 #endif //CIPHERSUITE_H

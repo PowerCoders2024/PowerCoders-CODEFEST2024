@@ -1,5 +1,8 @@
+//
+// Created by danny on 7/28/24.
+//
+
 #include "CipherSuite.h"
-#include <fstream> 
 
 CipherSuite::CipherSuite() {
     // Inicialización del constructor
@@ -13,59 +16,55 @@ CipherSuite::CipherSuite() {
 
 }
 
+
 void CipherSuite::keyGenerator(ecc_key& key) {
-    wc_ecc_init(&key);                
+                 // initialize rng
+    wc_ecc_init(&key);                // initialize key
     wc_ecc_set_rng(&key, &this->rng);
-    wc_ecc_make_key(&this->rng, 32, &key);  
+    wc_ecc_make_key(&this->rng, 32, &key);  // make public key
 
 }
 
-void CipherSuite::encryptAES(byte key[], const std::string &input_path, const std::string &output_path) {
-  
-
+void CipherSuite::encryptAES(byte key[], const std::string &input_path) {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
+    byte plain[AES_BLOCK_SIZE * 50];
+    std::stringstream ss(input_path);
+    ss.read((char*)plain, sizeof(plain));
 
-    std::ifstream infile(input_path, std::ios::binary);
-    std::ofstream outfile(output_path, std::ios::binary);
+    // Declaracion atributos de mensaje cifrado con su respectivo tamano
+    this->cipher = new byte[sizeof(plain)];
+    this->cipher_size = sizeof(plain);
 
-    const size_t block_size = AES_BLOCK_SIZE * 50;
-    byte plain[block_size];
-    byte cipher[block_size];
+    int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, plain, this->cipher_size, this->iv, sizeof(this->iv), this->authTag,
+                     sizeof(this->authTag), this->authIn, sizeof(this->authIn));
+    this->authTagSz = sizeof(this->authTag);
+    this->authInSz = sizeof(this->authIn);
+    if (ret == 0) {
+        std::cout << "Encriptado correctamente" << std::endl;
+        std::cout << plain << std::endl;
 
-    while (infile.read(reinterpret_cast<char*>(plain), block_size)) {
-        size_t read_size = infile.gcount();
-        int ret = wc_AesGcmEncrypt(&this->aes, cipher, plain, read_size, this->iv, sizeof(this->iv), this->authTag,
-                         sizeof(this->authTag), this->authIn, sizeof(this->authIn));
-        if (ret == 0) {
-            outfile.write(reinterpret_cast<char*>(cipher), read_size);
-        } else {
-            std::cout << "Encryption error: " << ret << std::endl;
-            break;
-        }
+    }else {
+        std::cout << "error: " << ret;
     }
 }
 
-void CipherSuite::decryptAES(byte key[], const std::string &input_path, const std::string &output_path) {
+void CipherSuite::decryptAES(byte key[], byte* cipher, size_t ciphSzs,  byte* authTag, size_t authTagSz,byte* authIn, size_t authInSz) {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
+    byte decrypted[ciphSzs];
+    int ret = wc_AesGcmDecrypt(&this->aes, decrypted, cipher, ciphSzs,  this->iv, sizeof( this->iv),
+                       authTag, authTagSz, authIn, authInSz);
+    if (ret == 0) {
+        std::cout << "Desencriptado correctamente: " << std::endl;
+        std::cout << cipher << std::endl;
+        std::cout << decrypted << std::endl;
 
-    std::ifstream infile(input_path, std::ios::binary);
-    std::ofstream outfile(output_path, std::ios::binary);
+    }else {
+        std::cout << "error: " << ret << std::endl;
+        std::cout << decrypted << std::endl;
 
-    const size_t block_size = AES_BLOCK_SIZE * 50;
-    byte cipher[block_size];
-    byte decrypted[block_size];
-
-    while (infile.read(reinterpret_cast<char*>(cipher), block_size)) {
-        size_t read_size = infile.gcount();
-        int ret = wc_AesGcmDecrypt(&this->aes, decrypted, cipher, read_size, this->iv, sizeof(this->iv),
-                           this->authTag, sizeof(this->authTag), this->authIn, sizeof(this->authIn));
-        if (ret == 0) {
-            outfile.write(reinterpret_cast<char*>(decrypted), read_size);
-        } else {
-            std::cout << "Decryption error: " << ret << std::endl;
-            break;
-        }
     }
+
 }
+
