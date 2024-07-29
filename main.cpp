@@ -22,7 +22,6 @@ const size_t block_size = 1024 * 1024;
 void encrypt(const std::string &input_path, const std::string &output_path);
 void decrypt(const std::string &input_path, const std::string &output_path);
 void init_keys(byte secret[AES_128_KEY_SIZE]);
-void encrypt_message(byte key[]);
 void get_public_key(ecc_key &pub);
 void process_image_blocks(const std::string &input_path, const std::string &output_path, const unsigned char *key, const unsigned char *iv, bool encrypt);
 void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv);
@@ -104,8 +103,6 @@ void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, 
   wc_AesInit(&aes, NULL, 0);
   res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
 
-  // byte plain[AES_BLOCK_SIZE * 50];
-  // byte cipher[sizeof(plain)];
   unsigned char tag[16];
   wc_AesGcmEncrypt(&aes, block, block, size, iv, sizeof(iv), tag, sizeof(tag), NULL, 0);
 }
@@ -117,50 +114,8 @@ void decrypt_block(unsigned char *block, size_t size, const unsigned char *key, 
   wc_AesInit(&aes, NULL, 0);
   res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
 
-  // byte plain[AES_BLOCK_SIZE * 50];
-  // byte cipher[sizeof(plain)];
-  // byte decrypted[sizeof(plain)];
-
   unsigned char tag[16];
   wc_AesGcmDecrypt(&aes, block, block, size, iv, sizeof(iv), tag, sizeof(tag), NULL, 0);
-}
-
-void encrypt_message(byte key[])
-{
-  int res;
-  Aes aes;
-  wc_AesInit(&aes, NULL, 0);
-  res = wc_AesGcmSetKey(&aes, key, 16);
-
-  byte plain[AES_BLOCK_SIZE * 50];
-  std::stringstream ss("Westcol vendiendo empanadas");
-  ss.read((char *)plain, sizeof(plain));
-
-  byte cipher[sizeof(plain)];
-  byte decrypted[sizeof(plain)];
-  byte iv[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-               0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-  byte authTag[16];
-  byte authIn[16] = {0};
-  std::cout << "cipher size: " << sizeof(cipher) << std::endl;
-  wc_AesGcmEncrypt(&aes, cipher, plain, sizeof(cipher), iv, sizeof(iv), authTag,
-                   sizeof(authTag), authIn, sizeof(authIn));
-
-  std::cout << "authIn en formato decimal Cuando sale:" << std::endl;
-  for (int i = 0; i < 16; ++i)
-  {
-    std::cout << static_cast<int>(authIn[i]) << " ";
-  }
-  std::cout << std::endl;
-  std::cout << sizeof(authTag) << std::endl;
-  std::cout << sizeof(authIn) << std::endl;
-
-  wc_AesGcmDecrypt(&aes, decrypted, cipher, sizeof(cipher), iv, sizeof(iv),
-                   authTag, sizeof(authTag), authIn, sizeof(authIn));
-
-  std::cout << plain << std::endl;
-  std::cout << cipher << std::endl;
-  std::cout << decrypted << std::endl;
 }
 
 void get_public_key(ecc_key &pub)
@@ -214,11 +169,4 @@ void process_image_blocks(const std::string &input_path, const std::string &outp
 
   std::cout << "Time taken for block processing: " << duration.count() << " seconds" << std::endl;
   std::cout << "Maximum memory used: " << max_memory << " GB" << std::endl;
-
-  // std::cout << (encrypt ? "Encrypted" : "Decrypted") << " data:\n";
-  // for (unsigned char c : output_buffer)
-  // {
-  //   std::cout << std::hex << static_cast<int>(c);
-  // }
-  // std::cout << std::dec << std::endl; // Reset back to decimal formatting
 }
