@@ -15,6 +15,13 @@
 #include <mutex>
 #include <sys/resource.h>
 
+#include <iostream>
+#include "CipherSuite.h"
+
+#include "EarthClient/EarthBase.h"
+#include "SpaceServer/Satellite.h"
+#include <wolfssl/wolfcrypt/pwdbased.h>
+
 // Variables
 const size_t block_size = 1024 * 1024;
 
@@ -23,12 +30,14 @@ void encrypt(const std::string &input_path, const std::string &output_path);
 void decrypt(const std::string &input_path, const std::string &output_path);
 void init_keys(byte secret[AES_128_KEY_SIZE]);
 void get_public_key(ecc_key &pub);
-void process_image_blocks(const std::string &input_path, const std::string &output_path, const unsigned char *key, const unsigned char *iv, bool encrypt);
+void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte *cipher, size_t cipher_size, byte *authTag,
+                          size_t authTagSz, byte *authIn, size_t authInSz, bool encrypt);
 void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv);
 void decrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv);
 
 int main(int argc, char *argv[])
 {
+
   if (argc != 4)
   {
     std::cerr << "Uso: " << argv[0] << " <operation> <input_path> <output_path>"
@@ -62,14 +71,33 @@ void encrypt(const std::string &input_path, const std::string &output_path)
   std::cout << "input_path=" << input_path << std::endl;
   std::cout << "output_path=" << output_path << std::endl;
 
-  byte secret[AES_128_KEY_SIZE];
-  byte iv[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-               0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+  EarthBase earth_base;
+  Satellite satellite;
 
-  init_keys(secret);
+  // Compartir las llaves publicas entre si
+  ecc_key pubEarth = earth_base.getPub();
+  ecc_key pubSat = satellite.getPub();
+
+  // Generar llave de sesion para cada uno
+  earth_base.setKeySession(pubSat);
+  satellite.setKeySession(pubEarth);
+
+  // Encryptar y desencriptar
+  byte *cipher = nullptr;
+  size_t cipher_size = 0;
+  byte *authTag = nullptr;
+  size_t authTagSz = 0;
+  byte *authIn = nullptr;
+  size_t authInSz = 0;
+
+  // byte secret[AES_128_KEY_SIZE];
+  // byte iv[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  //              0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+
+  // init_keys(secret);
   std::cout << "Encrypting image" << std::endl;
-  process_image_blocks(input_path, output_path, secret, iv, true);
-  process_image_blocks(output_path, "deciphered.png", secret, iv, false);
+  process_image_blocks(satellite, earth_base, input_path, output_path, cipher, cipher_size, authTag, authTagSz, authIn, authInSz, true);
+  process_image_blocks(satellite, earth_base, output_path, "deciphered.png", cipher, cipher_size, authTag, authTagSz, authIn, authInSz, false);
   std::cout << "Encrypted image" << std::endl;
 }
 
@@ -98,13 +126,13 @@ void init_keys(byte secret[AES_128_KEY_SIZE])
 
 void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv)
 {
-  int res;
-  Aes aes;
-  wc_AesInit(&aes, NULL, 0);
-  res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
+  // int res;
+  // Aes aes;
+  // wc_AesInit(&aes, NULL, 0);
+  // res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
 
-  unsigned char tag[16];
-  wc_AesGcmEncrypt(&aes, block, block, size, iv, sizeof(iv), tag, sizeof(tag), NULL, 0);
+  // unsigned char tag[16];
+  // wc_AesGcmEncrypt(&aes, block, block, size, iv, sizeof(iv), tag, sizeof(tag), NULL, 0);
 }
 
 void decrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv)
@@ -138,7 +166,8 @@ void decrypt(const std::string &input_path, const std::string &output_path)
   std::cout << "Decrypted image" << std::endl;
 }
 
-void process_image_blocks(const std::string &input_path, const std::string &output_path, const unsigned char *key, const unsigned char *iv, bool encrypt)
+void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte *cipher, size_t cipher_size, byte *authTag,
+                          size_t authTagSz, byte *authIn, size_t authInSz, bool encrypt)
 {
   std::ifstream input_file(input_path, std::ios::binary);
   std::ofstream output_file(output_path, std::ios::binary);
@@ -151,11 +180,13 @@ void process_image_blocks(const std::string &input_path, const std::string &outp
     size_t bytes_read = input_file.gcount();
     if (encrypt)
     {
-      encrypt_block(buffer.data(), bytes_read, key, iv);
+      satellite.encryptMessage(satellite.keySession, buffer.data(), bytes_read, &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz);
+      // encrypt_block(buffer.data(), bytes_read, key, iv);
     }
     else
     {
-      decrypt_block(buffer.data(), bytes_read, key, iv);
+      earth_base.decryptMessage(earth_base.keySession, buffer.data(), bytes_read, authTag, authTagSz, authIn, authInSz);
+      // decrypt_block(buffer.data(), bytes_read, key, iv);
     }
     output_file.write(reinterpret_cast<char *>(buffer.data()), bytes_read);
   }
