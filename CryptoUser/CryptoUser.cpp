@@ -20,16 +20,16 @@ void CryptoUser::setKeySession(ecc_key userPub) {
 }
 
 void CryptoUser::encryptMessage(byte key[], const std::string &input_path, byte** cipher, size_t* cipher_size, byte** authTag,
-    size_t* authTagSz,byte** authIn, size_t* authInSz) {
-    this->cipher_suite.encryptAES(key,input_path);
+                                size_t* authTagSz, byte** authIn, size_t* authInSz) {
+    this->cipher_suite.encryptAES(key, input_path);
     *cipher = this->cipher_suite.cipher;
     *cipher_size = this->cipher_suite.cipher_size;
-    *authTag =this->cipher_suite.authTag;
+    *authTag = this->cipher_suite.authTag;
     *authTagSz = this->cipher_suite.authTagSz;
     *authIn = this->cipher_suite.authIn;
     *authInSz = this->cipher_suite.authInSz;
 }
 
-void CryptoUser::decryptMessage(byte key[], byte* cipher, size_t ciphSzs,  byte* authTag, size_t authTagSz,byte* authIn, size_t authInSz) {
-    this->cipher_suite.decryptAES(key, cipher,ciphSzs,authTag,authTagSz,authIn,authInSz);
+void CryptoUser::decryptMessage(byte key[], byte* cipher, size_t ciphSzs, byte* authTag, size_t authTagSz, byte* authIn, size_t authInSz) {
+    this->cipher_suite.decryptAES(key, cipher, ciphSzs, authTag, authTagSz, authIn, authInSz);
 }

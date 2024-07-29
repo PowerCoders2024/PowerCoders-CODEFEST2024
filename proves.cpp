@@ -9,8 +9,6 @@
 #include <wolfssl/wolfcrypt/pwdbased.h>
 
 int main() {
-    // std::cout << "Hello, World!" << std::endl;
-
     std::cout << "Hello, World!" << std::endl;
     EarthBase earth_base;
     Satellite satellite;
@@ -27,7 +25,8 @@ int main() {
     size_t authTagSz = 0;
     byte* authIn = nullptr;
     size_t authInSz = 0;
-    satellite.encryptMessage(satellite.keySession, "Westcol vendiendo empanadas con aji y un poco de semen",&cipher, &cipher_size, &authTag, &authTagSz,&authIn, &authInSz);
-    earth_base.decryptMessage(earth_base.keySession,cipher,cipher_size,authTag,authTagSz,authIn, authInSz);
+    satellite.encryptMessage(satellite.keySession, "Prueba.txt", &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz);
+    earth_base.decryptMessage(earth_base.keySession, cipher, cipher_size, authTag, authTagSz, authIn, authInSz);
 
+    return 0;
 }
