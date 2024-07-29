@@ -88,8 +88,17 @@ void encrypt_message(byte key[]) {
                0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
   byte authTag[16];
   byte authIn[16] = {0};
+  std::cout << "cipher size: " << sizeof(cipher) << std::endl;
   wc_AesGcmEncrypt(&aes, cipher, plain, sizeof(cipher), iv, sizeof(iv), authTag,
                    sizeof(authTag), authIn, sizeof(authIn));
+
+  std::cout << "authIn en formato decimal Cuando sale:" << std::endl;
+  for (int i = 0; i < 16; ++i) {
+    std::cout << static_cast<int>(authIn[i]) << " ";
+  }
+  std::cout << std::endl;
+  std::cout << sizeof(authTag) <<std::endl;
+  std::cout << sizeof(authIn) <<std::endl;
 
   wc_AesGcmDecrypt(&aes, decrypted, cipher, sizeof(cipher), iv, sizeof(iv),
                    authTag, sizeof(authTag), authIn, sizeof(authIn));
@@ -102,7 +111,6 @@ void encrypt_message(byte key[]) {
 void get_public_key(ecc_key& pub) {
   // TODO: Leer clave pública, no crearla
   WC_RNG rng;
-
   wc_InitRng(&rng);                 // initialize rng
   wc_ecc_init(&pub);                // initialize key
   wc_ecc_make_key(&rng, 32, &pub);  // make public key
