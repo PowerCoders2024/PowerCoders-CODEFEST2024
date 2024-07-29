@@ -30,8 +30,8 @@ void encrypt(const std::string &input_path, const std::string &output_path);
 void decrypt(const std::string &input_path, const std::string &output_path);
 void init_keys(byte secret[AES_128_KEY_SIZE]);
 void get_public_key(ecc_key &pub);
-void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte *cipher, size_t cipher_size, byte *authTag,
-                          size_t authTagSz, byte *authIn, size_t authInSz, bool encrypt);
+void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte **cipher, size_t *cipher_size, byte **authTag,
+                          size_t *authTagSz, byte **authIn, size_t *authInSz, bool encrypt);
 void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv);
 void decrypt_block(unsigned char *block, size_t size, const unsigned char *key, const unsigned char *iv);
 
@@ -96,8 +96,8 @@ void encrypt(const std::string &input_path, const std::string &output_path)
 
   // init_keys(secret);
   std::cout << "Encrypting image" << std::endl;
-  process_image_blocks(satellite, earth_base, input_path, output_path, cipher, cipher_size, authTag, authTagSz, authIn, authInSz, true);
-  process_image_blocks(satellite, earth_base, output_path, "deciphered.png", cipher, cipher_size, authTag, authTagSz, authIn, authInSz, false);
+  process_image_blocks(satellite, earth_base, input_path, output_path, &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz, true);
+  process_image_blocks(satellite, earth_base, output_path, "deciphered.png", &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz, false);
   std::cout << "Encrypted image" << std::endl;
 }
 
@@ -166,12 +166,17 @@ void decrypt(const std::string &input_path, const std::string &output_path)
   std::cout << "Decrypted image" << std::endl;
 }
 
-void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte *cipher, size_t cipher_size, byte *authTag,
-                          size_t authTagSz, byte *authIn, size_t authInSz, bool encrypt)
+void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::string &input_path, const std::string &output_path, byte **cipher, size_t *cipher_size, byte **authTag,
+                          size_t *authTagSz, byte **authIn, size_t *authInSz, bool encrypt)
 {
   std::ifstream input_file(input_path, std::ios::binary);
   std::ofstream output_file(output_path, std::ios::binary);
   std::vector<unsigned char> buffer(block_size);
+
+  struct rusage usage;
+  getrusage(RUSAGE_SELF, &usage);
+  double max_memory = usage.ru_maxrss / (1024.0 * 1024.0); // Convert KB to GB
+  std::cout << "Maximum memory used before: " << max_memory << " GB" << std::endl;
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -180,24 +185,23 @@ void process_image_blocks(Satellite satellite, EarthBase earth_base, const std::
     size_t bytes_read = input_file.gcount();
     if (encrypt)
     {
-      satellite.encryptMessage(satellite.keySession, buffer.data(), bytes_read, &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz);
+      satellite.encryptMessage(satellite.keySession, buffer.data(), bytes_read, cipher, cipher_size, authTag, authTagSz, authIn, authInSz);
       // encrypt_block(buffer.data(), bytes_read, key, iv);
     }
     else
     {
-      earth_base.decryptMessage(earth_base.keySession, buffer.data(), bytes_read, authTag, authTagSz, authIn, authInSz);
+      earth_base.decryptMessage(earth_base.keySession, *cipher, *cipher_size, *authTag, *authTagSz, *authIn, *authInSz);
       // decrypt_block(buffer.data(), bytes_read, key, iv);
     }
-    output_file.write(reinterpret_cast<char *>(buffer.data()), bytes_read);
+    output_file.write(reinterpret_cast<char *>(*cipher), bytes_read);
   }
 
   auto end_time = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> duration = end_time - start_time;
 
-  struct rusage usage;
   getrusage(RUSAGE_SELF, &usage);
-  double max_memory = usage.ru_maxrss / (1024.0 * 1024.0); // Convert KB to GB
+  max_memory = usage.ru_maxrss / (1024.0 * 1024.0); // Convert KB to GB
 
   std::cout << "Time taken for block processing: " << duration.count() << " seconds" << std::endl;
-  std::cout << "Maximum memory used: " << max_memory << " GB" << std::endl;
+  std::cout << "Maximum memory used after: " << max_memory << " GB" << std::endl;
 }

@@ -32,7 +32,7 @@ public:
     // Functions
     void encryptMessage(byte key[], unsigned char *block, size_t block_size, byte **cipher, size_t *cipher_size,
                         byte **authTag, size_t *authTagSz, byte **authIn, size_t *authInSz);
-    void decryptMessage(byte key[], unsigned char *block, size_t ciphSzs, byte *authTag, size_t authTagSz,
+    void decryptMessage(byte key[], byte *block, size_t ciphSzs, byte *authTag, size_t authTagSz,
                         byte *authIn, size_t authInSz);
 };
 

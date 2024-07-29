@@ -31,7 +31,7 @@ public:
     CipherSuite();
     // CipherFunctions
     void encryptAES(byte key[], unsigned char *block, size_t block_size);
-    void decryptAES(byte key[], unsigned char *block,  size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz);
+    void decryptAES(byte key[], byte *block, size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz);
     void keyGenerator(ecc_key &key);
     void pskEngine();
 };

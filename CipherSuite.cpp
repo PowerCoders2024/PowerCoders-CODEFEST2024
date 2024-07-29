@@ -29,25 +29,19 @@ void CipherSuite::encryptAES(byte key[], unsigned char *block, size_t block_size
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // byte plain[AES_BLOCK_SIZE * 50];
-    // std::stringstream ss(input_path);
-    // ss.read((char *)plain, sizeof(plain));
-
     // Declaracion atributos de mensaje cifrado con su respectivo tamano
-    // this->cipher = new byte[sizeof(plain)];
-    // this->cipher_size = sizeof(plain);
+    this->cipher = new byte[block_size];
+    this->cipher_size = block_size;
 
-    // int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, plain, this->cipher_size, this->iv, sizeof(this->iv), this->authTag,
-    //                            sizeof(this->authTag), this->authIn, sizeof(this->authIn));
-    int ret = wc_AesGcmEncrypt(&this->aes, block, block, block_size, this->iv, sizeof(this->iv), this->authTag,
+    int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, block, this->cipher_size, this->iv, sizeof(this->iv), this->authTag,
                                sizeof(this->authTag), this->authIn, sizeof(this->authIn));
 
     this->authTagSz = sizeof(this->authTag);
     this->authInSz = sizeof(this->authIn);
+
     if (ret == 0)
     {
         std::cout << "Encriptado correctamente" << std::endl;
-        // std::cout << plain << std::endl;
     }
     else
     {
@@ -55,26 +49,23 @@ void CipherSuite::encryptAES(byte key[], unsigned char *block, size_t block_size
     }
 }
 
-void CipherSuite::decryptAES(byte key[], unsigned char *block, size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz)
+void CipherSuite::decryptAES(byte key[], byte *block, size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz)
 {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // byte decrypted[ciphSzs];
     // int ret = wc_AesGcmDecrypt(&this->aes, decrypted, cipher, ciphSzs, this->iv, sizeof(this->iv),
     //                            authTag, authTagSz, authIn, authInSz);
+
     int ret = wc_AesGcmDecrypt(&this->aes, block, block, ciphSzs, this->iv, sizeof(this->iv),
                                authTag, authTagSz, authIn, authInSz);
 
     if (ret == 0)
     {
         std::cout << "Desencriptado correctamente: " << std::endl;
-        // std::cout << cipher << std::endl;
-        // std::cout << decrypted << std::endl;
     }
     else
     {
         std::cout << "error desencriptando: " << ret << std::endl;
-        // std::cout << decrypted << std::endl;
     }
 }

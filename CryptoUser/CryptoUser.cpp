@@ -34,7 +34,7 @@ void CryptoUser::encryptMessage(byte key[], unsigned char *block, size_t block_s
     *authInSz = this->cipher_suite.authInSz;
 }
 
-void CryptoUser::decryptMessage(byte key[], unsigned char *block, size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz)
+void CryptoUser::decryptMessage(byte key[], byte *block, size_t ciphSzs, byte *authTag, size_t authTagSz, byte *authIn, size_t authInSz)
 {
     this->cipher_suite.decryptAES(key, block, ciphSzs, authTag, authTagSz, authIn, authInSz);
 }
