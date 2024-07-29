@@ -102,7 +102,7 @@ void encrypt_block(unsigned char *block, size_t size, const unsigned char *key, 
   int res;
   Aes aes;
   wc_AesInit(&aes, NULL, 0);
-  res = wc_AesGcmSetKey(&aes, key, AES_256_KEY_SIZE);
+  res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
 
   // byte plain[AES_BLOCK_SIZE * 50];
   // byte cipher[sizeof(plain)];
@@ -115,7 +115,7 @@ void decrypt_block(unsigned char *block, size_t size, const unsigned char *key, 
   int res;
   Aes aes;
   wc_AesInit(&aes, NULL, 0);
-  res = wc_AesGcmSetKey(&aes, key, AES_256_KEY_SIZE);
+  res = wc_AesGcmSetKey(&aes, key, AES_128_KEY_SIZE);
 
   // byte plain[AES_BLOCK_SIZE * 50];
   // byte cipher[sizeof(plain)];
@@ -179,7 +179,6 @@ void process_image_blocks(const std::string &input_path, const std::string &outp
   std::ifstream input_file(input_path, std::ios::binary);
   std::ofstream output_file(output_path, std::ios::binary);
   std::vector<unsigned char> buffer(block_size);
-  std::vector<unsigned char> output_buffer;
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -195,7 +194,6 @@ void process_image_blocks(const std::string &input_path, const std::string &outp
       decrypt_block(buffer.data(), bytes_read, key, iv);
     }
     output_file.write(reinterpret_cast<char *>(buffer.data()), bytes_read);
-    output_buffer.insert(output_buffer.end(), buffer.begin(), buffer.begin() + bytes_read);
   }
 
   auto end_time = std::chrono::high_resolution_clock::now();
