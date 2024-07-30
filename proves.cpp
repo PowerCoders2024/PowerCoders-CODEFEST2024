@@ -1,9 +1,6 @@
 #include <iostream>
-#include <fstream>
-#include "CipherSuite.h"
 #include "EarthClient/EarthBase.h"
 #include "SpaceServer/Satellite.h"
-#include <wolfssl/wolfcrypt/pwdbased.h>
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
@@ -19,15 +16,9 @@ int main() {
     satellite.setKeySession(pubEarth);
 
     // Encryptar y desencriptar
-    byte* cipher = nullptr;
-    size_t cipher_size = 0;
-    byte* authTag = nullptr;
-    size_t authTagSz = 0;
-    byte* authIn = nullptr;
-    size_t authInSz = 0;
-    std::string input_file = "original.jpg"; // Cambiar según el archivo de prueba
-    std::string encrypted_file = "original_encrypted.bin";
-    std::string decrypted_file = "original_decrypted.jpg";
+    std::string input_file = "original5.jpg"; // Cambiar según el archivo de prueba
+    std::string encrypted_file = "original_encrypted5.bin";
+    std::string decrypted_file = "original_decrypted5.jpg";
 
     satellite.encryptMessage(satellite.keySession, input_file, encrypted_file);
     std::cout << "Encryption completed" << std::endl;

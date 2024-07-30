@@ -1,6 +1,14 @@
 #include "CipherSuite.h"
 #include <fstream>
-#include <sstream>
+#include <vector>
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <filesystem>
+#include <cstring>  // Para memcpy
+#include <iostream>
+
+#define THREAD_POOL_SIZE 10
 
 CipherSuite::CipherSuite() {
     std::cout << "cipher init" << std::endl;
@@ -18,42 +26,99 @@ void CipherSuite::keyGenerator(ecc_key &key) {
     wc_ecc_make_key(&this->rng, 32, &key);
 }
 
+void encrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buffer, std::vector<byte>& cipher_block, size_t read_size, int thread_id, std::mutex& mtx, std::condition_variable& cv, int& active_threads, int max_threads) {
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        cv.wait(lock, [&] { return active_threads < max_threads; });
+        ++active_threads;
+    }
+
+    std::cout << "Encrypting thread #" << thread_id << ":..." << std::endl;
+    int ret = wc_AesGcmEncrypt(&cipherSuite.aes, cipher_block.data(), buffer.data(), read_size,
+                               cipherSuite.iv, sizeof(cipherSuite.iv), cipherSuite.authTag, sizeof(cipherSuite.authTag),
+                               cipherSuite.authIn, sizeof(cipherSuite.authIn));
+    if (ret != 0) {
+        std::cout << "Encryption error: " << ret << std::endl;
+    }
+    std::cout << "Encrypted thread #" << thread_id << std::endl;
+
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        --active_threads;
+        cv.notify_all();
+    }
+}
+
+void decrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buffer, std::vector<byte>& decrypted_block, size_t read_size, int thread_id, std::mutex& mtx, std::condition_variable& cv, int& active_threads, int max_threads) {
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        cv.wait(lock, [&] { return active_threads < max_threads; });
+        ++active_threads;
+    }
+
+    std::cout << "Decrypting thread #" << thread_id << ":..." << std::endl;
+    int ret = wc_AesGcmDecrypt(&cipherSuite.aes, decrypted_block.data(), buffer.data(), read_size,
+                               cipherSuite.iv, sizeof(cipherSuite.iv), cipherSuite.authTag, sizeof(cipherSuite.authTag),
+                               cipherSuite.authIn, sizeof(cipherSuite.authIn));
+    if (ret != 0) {
+        std::cout << "Decryption error: " << ret << std::endl;
+    }
+    std::cout << "Decrypted thread #" << thread_id << std::endl;
+
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        --active_threads;
+        cv.notify_all();
+    }
+}
+
 void CipherSuite::encryptAES(byte key[], const std::string &input_path, const std::string &output_path) {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
     // Tamaño de bloque para el procesamiento
-    const size_t block_size = 4096; // Puedes ajustar este tamaño según sea necesario
+    std::filesystem::path p(input_path);
+    unsigned long file_size = std::filesystem::file_size(p);
+    size_t block_size = file_size / (THREAD_POOL_SIZE - 1);
 
     // Abrir archivos de entrada y salida
     std::ifstream infile(input_path, std::ios::binary);
-    std::ofstream outfile(output_path, std::ios::binary);
+    std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
 
     if (!infile.is_open() || !outfile.is_open()) {
         std::cout << "Error opening files." << std::endl;
         return;
     }
 
-    // Buffer para el bloque de datos
-    byte buffer[block_size];
-    byte cipher_block[block_size];
-    size_t read_size;
+    std::mutex mtx;
+    std::condition_variable cv;
+    int active_threads = 0;
+    const int max_threads = THREAD_POOL_SIZE;
+    std::vector<std::thread> threads;
 
-    while (infile.read(reinterpret_cast<char*>(buffer), block_size) || (read_size = infile.gcount())) {
-        read_size = infile.gcount();
+    for (int i = 0; i < THREAD_POOL_SIZE; i++) {
+        std::vector<byte> buffer(block_size);
+        std::vector<byte> cipher_block(block_size);
+        infile.read(reinterpret_cast<char*>(buffer.data()), block_size);
+        size_t read_size = infile.gcount();
 
-        // Cifrar bloque
-        int ret = wc_AesGcmEncrypt(&this->aes, cipher_block, buffer, read_size,
-                                   this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag),
-                                   this->authIn, sizeof(this->authIn));
-        if (ret != 0) {
-            std::cout << "Encryption error: " << ret << std::endl;
-            return;
+        if (read_size == 0) break; // No more data to read
+
+        threads.emplace_back(encrypt_block, std::ref(*this), key, std::ref(buffer), std::ref(cipher_block), read_size, i, std::ref(mtx), std::ref(cv), std::ref(active_threads), max_threads);
+
+        for (auto& t : threads) {
+            if (t.joinable()) {
+                t.join();
+            }
         }
 
-        // Escribir authTag y bloque cifrado
-        outfile.write(reinterpret_cast<char*>(this->authTag), sizeof(this->authTag));
-        outfile.write(reinterpret_cast<char*>(cipher_block), read_size);
+        outfile.write(reinterpret_cast<const char*>(cipher_block.data()), read_size);
+    }
+
+    for (auto& t : threads) {
+        if (t.joinable()) {
+            t.join();
+        }
     }
 
     infile.close();
@@ -65,36 +130,48 @@ void CipherSuite::decryptAES(byte key[], const std::string &input_path, const st
     wc_AesGcmSetKey(&this->aes, key, 32);
 
     // Tamaño de bloque para el procesamiento
-    const size_t block_size = 4096; // Puedes ajustar este tamaño según sea necesario
+    std::filesystem::path p(input_path);
+    unsigned long file_size = std::filesystem::file_size(p);
+    size_t block_size = file_size / (THREAD_POOL_SIZE - 1);
 
     // Abrir archivos de entrada y salida
     std::ifstream infile(input_path, std::ios::binary);
-    std::ofstream outfile(output_path, std::ios::binary);
+    std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
 
     if (!infile.is_open() || !outfile.is_open()) {
         std::cout << "Error opening files." << std::endl;
         return;
     }
 
-    // Buffer para el bloque de datos
-    byte buffer[block_size];
-    byte decrypted_block[block_size];
-    size_t read_size;
+    std::mutex mtx;
+    std::condition_variable cv;
+    int active_threads = 0;
+    const int max_threads = THREAD_POOL_SIZE;
+    std::vector<std::thread> threads;
 
-    while (infile.read(reinterpret_cast<char*>(this->authTag), sizeof(this->authTag)) && infile.read(reinterpret_cast<char*>(buffer), block_size)) {
-        read_size = infile.gcount();
+    for (int i = 0; i < THREAD_POOL_SIZE; i++) {
+        std::vector<byte> buffer(block_size);
+        std::vector<byte> decrypted_block(block_size);
+        infile.read(reinterpret_cast<char*>(buffer.data()), block_size);
+        size_t read_size = infile.gcount();
 
-        // Descifrar bloque
-        int ret = wc_AesGcmDecrypt(&this->aes, decrypted_block, buffer, read_size,
-                                   this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag),
-                                   this->authIn, sizeof(this->authIn));
-        if (ret != 0) {
-            std::cout << "Decryption error: " << ret << std::endl;
-            return;
+        if (read_size == 0) break; // No more data to read
+
+        threads.emplace_back(decrypt_block, std::ref(*this), key, std::ref(buffer), std::ref(decrypted_block), read_size, i, std::ref(mtx), std::ref(cv), std::ref(active_threads), max_threads);
+
+        for (auto& t : threads) {
+            if (t.joinable()) {
+                t.join();
+            }
         }
 
-        // Escribir bloque descifrado
-        outfile.write(reinterpret_cast<char*>(decrypted_block), read_size);
+        outfile.write(reinterpret_cast<const char*>(decrypted_block.data()), read_size);
+    }
+
+    for (auto& t : threads) {
+        if (t.joinable()) {
+            t.join();
+        }
     }
 
     infile.close();

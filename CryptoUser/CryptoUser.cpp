@@ -1,4 +1,3 @@
-
 #include "CryptoUser.h"
 #include "../CipherSuite.h"
 
