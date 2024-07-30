@@ -33,8 +33,7 @@ void CipherSuite::encryptAES(byte key[], unsigned char *block, size_t block_size
     this->cipher = new byte[block_size];
     this->cipher_size = block_size;
 
-    int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, block, this->cipher_size, this->iv, sizeof(this->iv), this->authTag,
-                               sizeof(this->authTag), this->authIn, sizeof(this->authIn));
+    int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, block, this->cipher_size, this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag), this->authIn, sizeof(this->authIn));
 
     this->authTagSz = sizeof(this->authTag);
     this->authInSz = sizeof(this->authIn);
@@ -54,11 +53,7 @@ void CipherSuite::decryptAES(byte key[], byte *block, size_t ciphSzs, byte *auth
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // int ret = wc_AesGcmDecrypt(&this->aes, decrypted, cipher, ciphSzs, this->iv, sizeof(this->iv),
-    //                            authTag, authTagSz, authIn, authInSz);
-
-    int ret = wc_AesGcmDecrypt(&this->aes, block, block, ciphSzs, this->iv, sizeof(this->iv),
-                               authTag, authTagSz, authIn, authInSz);
+    int ret = wc_AesGcmDecrypt(&this->aes, block, block, ciphSzs, this->iv, sizeof(this->iv), authTag, authTagSz, authIn, authInSz);
 
     if (ret == 0)
     {
