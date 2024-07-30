@@ -11,7 +11,6 @@
 #include <filesystem>
 #include <string>
 #include <cstring>
-
 class CipherSuite {
     Aes aes;
     byte iv[16];
@@ -25,8 +24,8 @@ public:
     WC_RNG rng;
 
     CipherSuite();
-    void encryptAES(byte key[], const std::string &input_path);
-    void decryptAES(byte key[], byte* cipher, size_t ciphSzs, byte* authTag, size_t authTagSz, byte* authIn, size_t authInSz, const std::string &output_path);
+    void encryptAES(byte key[], const std::string &input_path, const std::string &output_path);
+    void decryptAES(byte key[], const std::string &input_path, const std::string &output_path);
     void keyGenerator(ecc_key &key);
 };
 

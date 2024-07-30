@@ -25,28 +25,15 @@ int main() {
     size_t authTagSz = 0;
     byte* authIn = nullptr;
     size_t authInSz = 0;
-    std::string input_file = "original.png"; // Cambiar según el archivo de prueba
+    std::string input_file = "original.jpg"; // Cambiar según el archivo de prueba
     std::string encrypted_file = "original_encrypted.bin";
-    std::string decrypted_file = "original_decrypted.png";
+    std::string decrypted_file = "original_decrypted.jpg";
 
-    satellite.encryptMessage(satellite.keySession, input_file, &cipher, &cipher_size, &authTag, &authTagSz, &authIn, &authInSz);
-    if (cipher_size > 0) {
-        earth_base.decryptMessage(earth_base.keySession, cipher, cipher_size, authTag, authTagSz, authIn, authInSz, decrypted_file);
-    } else {
-        std::cout << "Encryption failed, cipher_size is 0." << std::endl;
-    }
+    satellite.encryptMessage(satellite.keySession, input_file, encrypted_file);
+    std::cout << "Encryption completed" << std::endl;
 
-    // Guardar el archivo cifrado (opcional para depuración)
-    if (cipher_size > 0) {
-        std::ofstream encrypted_out(encrypted_file, std::ios::binary);
-        encrypted_out.write(reinterpret_cast<char*>(cipher), cipher_size);
-        encrypted_out.close();
-    }
-
-    // Liberar memoria
-    delete[] cipher;
-    delete[] authTag;
-    delete[] authIn;
+    earth_base.decryptMessage(earth_base.keySession, encrypted_file, decrypted_file);
+    std::cout << "Decryption completed" << std::endl;
 
     return 0;
 }

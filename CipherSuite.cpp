@@ -18,70 +18,85 @@ void CipherSuite::keyGenerator(ecc_key &key) {
     wc_ecc_make_key(&this->rng, 32, &key);
 }
 
-void CipherSuite::encryptAES(byte key[], const std::string &input_path) {
+void CipherSuite::encryptAES(byte key[], const std::string &input_path, const std::string &output_path) {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // Leer archivo completo
+    // Tamaño de bloque para el procesamiento
+    const size_t block_size = 4096; // Puedes ajustar este tamaño según sea necesario
+
+    // Abrir archivos de entrada y salida
     std::ifstream infile(input_path, std::ios::binary);
-    if (!infile.is_open()) {
-        std::cout << "Error opening input file." << std::endl;
-        return;
-    }
-    std::ostringstream oss;
-    oss << infile.rdbuf();
-    std::string plain_data = oss.str();
-    size_t plain_size = plain_data.size();
+    std::ofstream outfile(output_path, std::ios::binary);
 
-    // Preparar buffer para el cifrado
-    this->cipher = new byte[plain_size];
-    this->cipher_size = plain_size;
-
-    // Cifrar datos completos
-    int ret = wc_AesGcmEncrypt(&this->aes, this->cipher, (const byte*)plain_data.data(), plain_size,
-                               this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag),
-                               this->authIn, sizeof(this->authIn));
-    if (ret != 0) {
-        std::cout << "Encryption error: " << ret << std::endl;
-        delete[] this->cipher;
-        this->cipher = nullptr;
-        this->cipher_size = 0;
+    if (!infile.is_open() || !outfile.is_open()) {
+        std::cout << "Error opening files." << std::endl;
         return;
     }
 
-    this->authTagSz = sizeof(this->authTag);
-    this->authInSz = sizeof(this->authIn);
+    // Buffer para el bloque de datos
+    byte buffer[block_size];
+    byte cipher_block[block_size];
+    size_t read_size;
 
-    std::cout << "Encriptado correctamente" << std::endl;
+    while (infile.read(reinterpret_cast<char*>(buffer), block_size) || (read_size = infile.gcount())) {
+        read_size = infile.gcount();
+
+        // Cifrar bloque
+        int ret = wc_AesGcmEncrypt(&this->aes, cipher_block, buffer, read_size,
+                                   this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag),
+                                   this->authIn, sizeof(this->authIn));
+        if (ret != 0) {
+            std::cout << "Encryption error: " << ret << std::endl;
+            return;
+        }
+
+        // Escribir authTag y bloque cifrado
+        outfile.write(reinterpret_cast<char*>(this->authTag), sizeof(this->authTag));
+        outfile.write(reinterpret_cast<char*>(cipher_block), read_size);
+    }
+
+    infile.close();
+    outfile.close();
 }
 
-void CipherSuite::decryptAES(byte key[], byte* cipher, size_t ciphSzs, byte* authTag, size_t authTagSz, byte* authIn, size_t authInSz, const std::string &output_path) {
+void CipherSuite::decryptAES(byte key[], const std::string &input_path, const std::string &output_path) {
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // Preparar buffer para el descifrado
-    byte* decrypted = new byte[ciphSzs];
+    // Tamaño de bloque para el procesamiento
+    const size_t block_size = 4096; // Puedes ajustar este tamaño según sea necesario
 
-    // Descifrar datos completos
-    int ret = wc_AesGcmDecrypt(&this->aes, decrypted, cipher, ciphSzs, this->iv, sizeof(this->iv),
-                               authTag, authTagSz, authIn, authInSz);
-    if (ret != 0) {
-        std::cout << "Decryption error: " << ret << std::endl;
-        delete[] decrypted;
-        return;
-    }
-
-    // Guardar datos descifrados en el archivo
+    // Abrir archivos de entrada y salida
+    std::ifstream infile(input_path, std::ios::binary);
     std::ofstream outfile(output_path, std::ios::binary);
-    if (!outfile.is_open()) {
-        std::cout << "Error opening output file." << std::endl;
-        delete[] decrypted;
+
+    if (!infile.is_open() || !outfile.is_open()) {
+        std::cout << "Error opening files." << std::endl;
         return;
     }
-    outfile.write(reinterpret_cast<char*>(decrypted), ciphSzs);
+
+    // Buffer para el bloque de datos
+    byte buffer[block_size];
+    byte decrypted_block[block_size];
+    size_t read_size;
+
+    while (infile.read(reinterpret_cast<char*>(this->authTag), sizeof(this->authTag)) && infile.read(reinterpret_cast<char*>(buffer), block_size)) {
+        read_size = infile.gcount();
+
+        // Descifrar bloque
+        int ret = wc_AesGcmDecrypt(&this->aes, decrypted_block, buffer, read_size,
+                                   this->iv, sizeof(this->iv), this->authTag, sizeof(this->authTag),
+                                   this->authIn, sizeof(this->authIn));
+        if (ret != 0) {
+            std::cout << "Decryption error: " << ret << std::endl;
+            return;
+        }
+
+        // Escribir bloque descifrado
+        outfile.write(reinterpret_cast<char*>(decrypted_block), read_size);
+    }
+
+    infile.close();
     outfile.close();
-
-    delete[] decrypted;
-
-    std::cout << "Desencriptado correctamente y guardado en " << output_path << std::endl;
 }

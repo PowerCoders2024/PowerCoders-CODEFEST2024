@@ -25,8 +25,8 @@ public:
     CryptoUser();
     ecc_key getPub() const;
     void setKeySession(ecc_key userPub);
-    void encryptMessage(byte key[], const std::string &input_path, byte** cipher, size_t* cipher_size, byte** authTag, size_t* authTagSz, byte** authIn, size_t* authInSz);
-    void decryptMessage(byte key[], byte* cipher, size_t ciphSzs, byte* authTag, size_t authTagSz, byte* authIn, size_t authInSz, const std::string &output_path);
+    void encryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
+    void decryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
 };
 
 #endif // CRYPTOUSER_H
