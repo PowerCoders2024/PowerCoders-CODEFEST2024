@@ -9,12 +9,13 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <mutex>
+#include <condition_variable>
 
 class CipherSuite {
 public:
     Aes aes;
     byte iv[16];
-    byte authTag[16];
     byte authIn[16] = {0};
     WC_RNG rng;
 
