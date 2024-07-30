@@ -28,6 +28,7 @@ public:
     // Constructor
     CipherSuite();
     // CipherFunctions
+    void initializeCipherSuite();
     void encryptAES(byte key[], const std::string& input_path);
     void decryptAES(byte key[], byte* cipher, size_t ciphSzs,  byte* authTag, size_t authTagSz,byte* authIn, size_t authInSz);
     void keyGenerator(ecc_key& key);
