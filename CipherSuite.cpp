@@ -5,7 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <filesystem>
-#include <cstring>  // Para memcpy
+#include <cstring> 
 #include <iostream>
 
 #define THREAD_POOL_SIZE 10
@@ -94,15 +94,11 @@ void CipherSuite::encryptAES(byte key[], const std::string &input_path, const st
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // Tamaño de bloque para el procesamiento
     std::filesystem::path p(input_path);
     unsigned long file_size = std::filesystem::file_size(p);
     size_t block_size = file_size / THREAD_POOL_SIZE;
 
-    // Ajustar el último bloque
     size_t last_block_size = file_size - block_size * (THREAD_POOL_SIZE - 1);
-
-    // Abrir archivos de entrada y salida
     std::ifstream infile(input_path, std::ios::binary);
     std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
 
@@ -157,15 +153,12 @@ void CipherSuite::decryptAES(byte key[], const std::string &input_path, const st
     wc_AesInit(&this->aes, NULL, 0);
     wc_AesGcmSetKey(&this->aes, key, 32);
 
-    // Tamaño de bloque para el procesamiento
     std::filesystem::path p(input_path);
     unsigned long file_size = std::filesystem::file_size(p);
     size_t block_size = (file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) / THREAD_POOL_SIZE;
 
-    // Ajustar el último bloque
     size_t last_block_size = (file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) - block_size * (THREAD_POOL_SIZE - 1);
 
-    // Abrir archivos de entrada y salida
     std::ifstream infile(input_path, std::ios::binary);
     std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
 

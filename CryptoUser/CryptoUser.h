@@ -1,5 +1,3 @@
-
-// CryptoUser.h
 #ifndef CRYPTOUSER_H
 #define CRYPTOUSER_H
 

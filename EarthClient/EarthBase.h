@@ -1,7 +1,3 @@
-//
-// Created by danny on 7/28/24.
-//
-
 #ifndef EARTHBASE_H
 #define EARTHBASE_H
 #include <wolfssl/options.h>
