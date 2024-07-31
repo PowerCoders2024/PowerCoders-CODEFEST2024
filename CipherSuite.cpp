@@ -13,19 +13,32 @@
 #define IV_SIZE 16
 
 CipherSuite::CipherSuite() {
-    std::cout << "cipher init" << std::endl;
+    /* std::cout << "cipher init" << std::endl;
 
     byte ivGen[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
                     0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-    std::memcpy(this->iv, ivGen, IV_SIZE);
+    std::memcpy(this->iv, ivGen, IV_SIZE); */
 
     wc_InitRng(&this->rng);
 }
 
+void CipherSuite::initializeCipherSuite() {
+    // Inicialización del constructor
+    std::cout << "cipher init" << std::endl;
+
+    byte ivGen[] = {
+        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+        0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+    };
+    std::memcpy(this->iv, ivGen, 16);
+    //wc_InitRng(&this->rng);
+}
+
+
 void CipherSuite::keyGenerator(ecc_key &key) {
     wc_ecc_init(&key);
     wc_ecc_set_rng(&key, &this->rng);
-    wc_ecc_make_key(&this->rng, 32, &key);
+    wc_ecc_make_key(&this->rng, 8, &key); //Danny cambio de 32 a 8
 }
 
 void encrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buffer, std::vector<byte>& cipher_block, std::vector<byte>& iv, std::vector<byte>& authTag, size_t read_size, int thread_id, std::mutex& mtx, std::condition_variable& cv, int& active_threads, int max_threads) {
@@ -207,4 +220,24 @@ void CipherSuite::decryptAES(byte key[], const std::string &input_path, const st
 
     infile.close();
     outfile.close();
+}
+
+int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
+    WC_RNG rng;
+
+    int ret = wc_InitRng(&rng);
+    if (ret != 0) {
+        printf("Error initializing RNG: %d\n", ret);
+        return ret;
+    }
+
+    ret = wc_RNG_GenerateBlock(&rng, pskKey, keySize);
+    if (ret != 0) {
+        printf("Error generating PSK key: %d\n", ret);
+        wc_FreeRng(&rng);
+        return ret;
+    }
+
+    wc_FreeRng(&rng);
+    return 0;  // Éxito
 }

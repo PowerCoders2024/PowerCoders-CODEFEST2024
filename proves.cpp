@@ -28,7 +28,7 @@ int main() {
     satellite.setKeySession(pubEarth);
 
     // Encryptar y desencriptar
-    std::string input_file = "imp.jpg"; 
+    std::string input_file = "original2.jpg"; 
     std::string encrypted_file = "original_encrypted.bin";
     std::string decrypted_file = "imp_decrypted.jpg";
 
