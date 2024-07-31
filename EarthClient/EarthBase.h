@@ -1,23 +1,25 @@
 #ifndef EARTHBASE_H
 #define EARTHBASE_H
-#include <wolfssl/options.h>
-#include <iostream>
-#include <wolfssl/wolfcrypt/aes.h>
-#include <wolfssl/wolfcrypt/ecc.h>
-#include <filesystem>
-#include <string>
-#include <wolfssl/wolfcrypt/types.h>
+
 
 #include "../CryptoUser/CryptoUser.h"
+#include "../SpaceServer/Satellite.h"
+#include <wolfssl/ssl.h>
 
-
-class EarthBase : public CryptoUser{
+class EarthBase : public CryptoUser {
+    const char *client_identity = "Client_identity";
+    const char *psk_key = "123456"; // Clave PSK
 public:
-    EarthBase() : CryptoUser() {};
+    WOLFSSL *ssl;
 
+    EarthBase();
 
+    unsigned int receiveServerHint(Satellite satellite);
+
+    void sendIdentity(Satellite satellite);
+
+    // static void receiveServerHint(Satellite satellite);
 };
-
 
 
 #endif //EARTHBASE_H

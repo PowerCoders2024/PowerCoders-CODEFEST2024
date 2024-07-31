@@ -18,9 +18,11 @@ class CryptoUser {
 public:
     byte keySession[AES_256_KEY_SIZE];
     word32 keySessionSz = AES_256_KEY_SIZE;
-    CipherSuite cipher_suite;
+    CipherSuite cipher_suite = CipherSuite();;
 
     CryptoUser();
+
+    void initializeCryptoUser();
     ecc_key getPub() const;
     void setKeySession(ecc_key userPub);
     void encryptMessage(byte key[], const std::string &input_path, const std::string &output_path);

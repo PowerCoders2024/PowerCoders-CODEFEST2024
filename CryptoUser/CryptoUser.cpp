@@ -2,10 +2,13 @@
 #include "../CipherSuite.h"
 
 CryptoUser::CryptoUser() {
+    /* std::cout << "Claves generadas correctamente" << std::endl;
+    this->cipher_suite.keyGenerator(this->priv); */
+}
+void CryptoUser::initializeCryptoUser() {
     std::cout << "Claves generadas correctamente" << std::endl;
     this->cipher_suite.keyGenerator(this->priv);
 }
-
 ecc_key CryptoUser::getPub() const {
     return this->priv;
 }

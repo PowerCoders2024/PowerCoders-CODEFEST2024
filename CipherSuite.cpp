@@ -8,7 +8,7 @@
 #include <cstring> 
 #include <iostream>
 
-#define THREAD_POOL_SIZE 10
+#define THREAD_POOL_SIZE 100
 #define AUTH_TAG_SIZE 16
 #define IV_SIZE 16
 
@@ -35,7 +35,7 @@ void encrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buff
         ++active_threads;
     }
 
-    std::cout << "Encrypting thread #" << thread_id << ":..." << std::endl;
+    /* std::cout << "Encrypting thread #" << thread_id << ":..." << std::endl; */
     Aes aes;
     wc_AesInit(&aes, NULL, 0);
     wc_AesGcmSetKey(&aes, key, 32);
@@ -52,7 +52,7 @@ void encrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buff
     if (ret != 0) {
         std::cout << "Encryption error: " << ret << std::endl;
     }
-    std::cout << "Encrypted thread #" << thread_id << std::endl;
+    /* std::cout << "Encrypted thread #" << thread_id << std::endl; */
 
     {
         std::lock_guard<std::mutex> lock(mtx);
@@ -68,7 +68,7 @@ void decrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buff
         ++active_threads;
     }
 
-    std::cout << "Decrypting thread #" << thread_id << ":..." << std::endl;
+    /* std::cout << "Decrypting thread #" << thread_id << ":..." << std::endl; */
     Aes aes;
     wc_AesInit(&aes, NULL, 0);
     wc_AesGcmSetKey(&aes, key, 32);
@@ -81,7 +81,7 @@ void decrypt_block(CipherSuite& cipherSuite, byte key[], std::vector<byte>& buff
     if (ret != 0) {
         std::cout << "Decryption error: " << ret << std::endl;
     }
-    std::cout << "Decrypted thread #" << thread_id << std::endl;
+    /* std::cout << "Decrypted thread #" << thread_id << std::endl; */
 
     {
         std::lock_guard<std::mutex> lock(mtx);
