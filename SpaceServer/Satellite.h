@@ -10,8 +10,8 @@
 
 class Satellite : public CryptoUser {
     WOLFSSL_CTX *ctx = nullptr;
-    const char *serverHint = "id_server";
-    const char *psk_key = "123456"; // Clave PSK
+    const char *serverHint = "satellite_identity";
+    const char *client_identity = "earth_identity";
 
 public:
     WOLFSSL *ssl;
@@ -21,9 +21,8 @@ public:
     //Inicializar
     int initialize();
 
-    unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity,
-                                      unsigned char *key, unsigned int key_max_len);
-    
+    unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity);
+
     void clear();
 };
 

@@ -5,7 +5,9 @@
 #include "EarthBase.h"
 
 EarthBase::EarthBase() : CryptoUser() {
-    std::cout << "Client Hello" << std::endl;
+
+
+    std::cout << "Client: Client Hello" << " Communication established -->" << std::endl;
     WOLFSSL_CTX *ctx = wolfSSL_CTX_new(wolfTLSv1_3_client_method());
     if (ctx == nullptr) {
         printf("wolfSSL_CTX_new error.\n");
@@ -14,30 +16,38 @@ EarthBase::EarthBase() : CryptoUser() {
     if (this->ssl == nullptr) {
         printf("wolfSSL_new error.\n");
     }
-    std::cout << "Communication established" << std::endl;
+
 }
 
 unsigned int EarthBase::receiveServerHint(Satellite satellite) {
-    std::cout << "Server Hello (Exchange)" << std::endl;
-    if (const char *idHintRetrieved = wolfSSL_get_psk_identity_hint(satellite.ssl)) {
-        std::cout << "Hint retrieved: " << idHintRetrieved << std::endl;
+    std::cout << "<-- Server: Server Hello (ServerExchange Hint)" << std::endl;
+    const char *idHintRetrieved = wolfSSL_get_psk_identity_hint(satellite.ssl);
+    if ( std::strcmp(idHintRetrieved, this->server_hint) == 0 )  {
+        std::cout << "Client: Hint recongnized= " << idHintRetrieved << std::endl;
     } else {
-        std::cerr << "El hint no fue creado correctamente" << std::endl;
+        std::cerr << "Unknown device" << std::endl;
+        return 0;
     }
-
+    std::cout << " <-- Server Hello Done" << std::endl;
     // strncpy(identity, this->client_identity, id_max_len);
     // strncpy(reinterpret_cast<char *>(key), psk_key, key_max_len);
-    return strlen(psk_key);
+    return sizeof(this->pskKey);
 }
 
 void EarthBase::sendIdentity(Satellite satellite) {
-    std::cout << "Client Exchange" << std::endl;
-    unsigned char key[256]; // Buffer llave obtenida
-    satellite.verifyClientIdentity(this->ssl, this->client_identity, key, sizeof(key));
-    if (strncmp(reinterpret_cast<const char *>(key), this->psk_key, sizeof(key)) == 0) {
+    std::cout << "Client: Client Exchange Identity -->  " << std::endl;
+
+    unsigned int clientVerify = satellite.verifyClientIdentity(this->ssl, this->client_identity);
+
+    if (clientVerify > 0) {
+        std::cout << "Client: Finished (client) -->" << std::endl;
         std::cout << "Autenticación PSK exitosa." << std::endl;
-        std::cout << "Clave PSK: " << key << std::endl;
-        std::cout << "Finished (client)" << std::endl;
+        std::cout << "Clave PSK  usar : ";
+        for (int i = 0; i < sizeof(this->pskKey); i++) {
+            printf("%02x", pskKey[i]);
+        }
+        printf("\n");
+        // Enviar ultimo mensaje encriptado con la psk y termina
     } else {
         std::cout << "Autenticación PSK fallida.";
     }

@@ -21,6 +21,7 @@ class CryptoUser {
     ecc_key priv, pub;
 
 public:
+    static byte pskKey[16];
     byte keySession[AES_256_KEY_SIZE];
     word32 keySessionSz = AES_256_KEY_SIZE;
     CipherSuite cipher_suite = CipherSuite();

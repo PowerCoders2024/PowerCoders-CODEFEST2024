@@ -13,6 +13,7 @@ Satellite::Satellite(): CryptoUser() {
 int Satellite::initialize() {
     wolfSSL_Init();
 
+
     // Crear contexto y método
     WOLFSSL_METHOD *method = wolfTLSv1_3_server_method();
     if (method == nullptr) {
@@ -46,14 +47,19 @@ int Satellite::initialize() {
     return 0;
 }
 
-unsigned int Satellite::verifyClientIdentity(WOLFSSL *ssl, const char *identity,
-                                             unsigned char *key, unsigned int key_max_len) {
+unsigned int Satellite::verifyClientIdentity(WOLFSSL *ssl, const char *identity ) {
     if (identity == nullptr) {
         return 0;
     }
-    if (strncmp(identity, "Client_identity", key_max_len) == 0) {
-        strncpy((char *) key, this->psk_key, key_max_len);
-        return strlen(this->psk_key);
+    if (std::strcmp (identity , this->client_identity) == 0  ) {
+        std::cout << "Server: Client ready with PSK identity." << std::endl;
+        std::cout << "Identity: " << identity << std::endl;
+        std::cout << "PSK key: ";
+        for (int i = 0; i < sizeof(this->pskKey); i++) {
+            printf("%02x", pskKey[i]);
+        }
+        printf("\n");
+        return sizeof(this->pskKey);
     }
     return 0; // No coincide la identidad
 }

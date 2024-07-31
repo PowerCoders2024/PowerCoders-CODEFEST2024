@@ -25,6 +25,7 @@ public:
     byte authIn[16] = {0};
     size_t authInSz;
     WC_RNG rng;
+    static byte pskKey[16];
     // Constructor
     CipherSuite();
     // CipherFunctions
@@ -32,7 +33,7 @@ public:
     void encryptAES(byte key[], const std::string& input_path);
     void decryptAES(byte key[], byte* cipher, size_t ciphSzs,  byte* authTag, size_t authTagSz,byte* authIn, size_t authInSz);
     void keyGenerator(ecc_key& key);
-    void pskEngine();
+    static int  PSKKeyGenerator(byte* pskKey, int keySize);
 
 };
 

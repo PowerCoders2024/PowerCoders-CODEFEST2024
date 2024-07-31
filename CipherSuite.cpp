@@ -24,7 +24,7 @@ void CipherSuite::keyGenerator(ecc_key &key) {
     // initialize rng
     wc_ecc_init(&key); // initialize key
     wc_ecc_set_rng(&key, &this->rng);
-    wc_ecc_make_key(&this->rng, 32, &key); // make public key
+    wc_ecc_make_key(&this->rng, 8, &key); // make public key
 }
 
 void CipherSuite::encryptAES(byte key[], const std::string &input_path) {
@@ -68,3 +68,22 @@ void CipherSuite::decryptAES(byte key[], byte *cipher, size_t ciphSzs, byte *aut
     }
 }
 
+int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
+    WC_RNG rng;
+
+    int ret = wc_InitRng(&rng);
+    if (ret != 0) {
+        printf("Error initializing RNG: %d\n", ret);
+        return ret;
+    }
+
+    ret = wc_RNG_GenerateBlock(&rng, pskKey, keySize);
+    if (ret != 0) {
+        printf("Error generating PSK key: %d\n", ret);
+        wc_FreeRng(&rng);
+        return ret;
+    }
+
+    wc_FreeRng(&rng);
+    return 0;  // Éxito
+}

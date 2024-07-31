@@ -11,18 +11,14 @@
 #include <wolfssl/ssl.h>
 
 class EarthBase : public CryptoUser {
-    const char *client_identity = "Client_identity";
-    const char *psk_key = "123456"; // Clave PSK
+    const char *client_identity = "earth_identity";
+    const char *server_hint = "satellite_identity";
 public:
     WOLFSSL *ssl;
-
     EarthBase();
-
     unsigned int receiveServerHint(Satellite satellite);
-
     void sendIdentity(Satellite satellite);
 
-    // static void receiveServerHint(Satellite satellite);
 };
 
 
