@@ -23,7 +23,7 @@ success() {
 }
 
 # Cambiar al directorio de wolfSSL
-cd ./wolfssl-5.7.2 || handle_error "No se pudo cambiar al directorio wolfssl-5.7.2"
+cd ./libraries/wolfssl-5.7.2 || handle_error "No se pudo cambiar al directorio wolfssl-5.7.2"
 
 info "Configurando wolfSSL..."
 ./configure --enable-all || handle_error "La configuración de wolfSSL falló"

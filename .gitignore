@@ -1,11 +1,16 @@
 .vscode/
+.clang-format
 
 # Testing files
 *.jpg
+*.jpeg
 *.png
 *.txt
 *.bin
 
 # Executable files
 *.out
+
+#Library files
+libraries/
 
