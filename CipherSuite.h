@@ -13,11 +13,15 @@
 #include <string>
 #include <vector>
 
+#define THREAD_POOL_SIZE 5
+#define AUTH_TAG_SIZE 16
+#define IV_SIZE 16
+#define AUTH_IN_SIZE 16
 class CipherSuite {
 public:
 	Aes aes;
-	byte iv[16];
-	byte authIn[16] = {0};
+	byte iv[IV_SIZE];
+	byte authIn[AUTH_IN_SIZE] = {0};
 	WC_RNG rng;
 	static byte pskKey[16];
 
