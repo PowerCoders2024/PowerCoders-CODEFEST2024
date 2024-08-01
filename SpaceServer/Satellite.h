@@ -4,10 +4,10 @@
 
 #ifndef SATELLITE_H
 #define SATELLITE_H
-#include <wolfssl/ssl.h>
 
 #include "../CryptoUser/CryptoUser.h"
 
+#include <wolfssl/ssl.h>
 class Satellite : public CryptoUser {
 	const char *serverHint = "satellite_identity";
 	const char *client_identity = "earth_identity";
