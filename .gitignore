@@ -1,0 +1,11 @@
+.vscode/
+
+# Testing files
+*.jpg
+*.png
+*.txt
+*.bin
+
+# Executable files
+*.out
+
