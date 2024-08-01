@@ -92,30 +92,8 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
             return;
         }
 
-        // Exportar clave privada
-        byte priv[8];
-        word32 privSz = sizeof(priv);
-        if (wc_ecc_export_private_only(&pubEarth, priv, &privSz) != 0) {
-            std::cerr << "Failed to export private key" << std::endl;
-            return;
-        }
-
-        // Exportar clave pública
-        byte pub[32];
-        word32 pubSz = sizeof(pub);
-        if (wc_ecc_export_x963(&pubEarth, pub, &pubSz) != 0) {
-            std::cerr << "Failed to export public key" << std::endl;
-            return;
-        }
-
-        // Escribir el tamaño y los datos de la clave privada
-        file.write(reinterpret_cast<const char*>(&privSz), sizeof(privSz));
-        file.write(reinterpret_cast<const char*>(priv), privSz);
-
-        // Escribir el tamaño y los datos de la clave pública
-        file.write(reinterpret_cast<const char*>(&pubSz), sizeof(pubSz));
-        file.write(reinterpret_cast<const char*>(pub), pubSz);
-
+        // Escribir el tamaño y los datos de la clave compartida
+        file.write(reinterpret_cast<const char*>(earth_base.keySession), 32);
         if (!file) {
             std::cerr << "Error writing to file: " << filename << std::endl;
         }
@@ -133,39 +111,36 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 void decrypt(const std::string& input_path, const std::string& output_path) {
     std::cout << "input_path=" << input_path << std::endl;
     std::cout << "output_path=" << output_path << std::endl;
-    
-    //Leer file con (Shared key o Llave )
-    const std::string filename = "shared_key.bin";
-    std::ifstream file(filename, std::ios::binary);
+
+    byte shared_key[32];
+    printf("entrsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao");
+
+    std::ifstream file("shared_key.bin", std::ios::binary);
     if (!file) {
-        std::cerr << "Error opening file for reading: " << filename << std::endl;
+        std::cerr << "Error opening file for reading: " << "shared_key.bin" << std::endl;
+        return;
+    }
+    
+    // Leer el archivo en el buffer de clave compartida
+    file.read(reinterpret_cast<char*>(shared_key), 32);
+    if (!file) {
+        std::cerr << "Error reading from file: " << "shared_key.bin" << std::endl;
     }
 
-    // Leer el tamaño y los datos de la clave privada
-    word32 privSz;
-    file.read(reinterpret_cast<char*>(&privSz), sizeof(privSz));
-    byte* priv = new byte[privSz];
-    file.read(reinterpret_cast<char*>(priv), privSz);
-
-    // Leer el tamaño y los datos de la clave pública
-    word32 pubSz;
-    file.read(reinterpret_cast<char*>(&pubSz), sizeof(pubSz));
-    byte* pub = new byte[pubSz];
-    file.read(reinterpret_cast<char*>(pub), pubSz);
-
-    // Importar clave privada
-    ecc_key *pubEarth; 
-    if (wc_ecc_import_private_key(priv, privSz, pub, pubSz, pubEarth) != 0) {
-        std::cerr << "Failed to import private key" << std::endl;
-        // delete[] priv;
-        // delete[] pub;
-    }
+    // Ajustar el tamaño de la clave compartida leída
+    // word32& sharedKeySize = static_cast<word32>(file.gcount());
 
     file.close();
 
-    earth_base.setKeySession(*pubEarth);
+    if (remove("shared_key.bin") != 0) {
+        std::cerr << "Error deleting file: " << "shared_key.bin" << std::endl;
+    } else {
+        std::cout << "File " << "shared_key.bin" << " deleted successfully" << std::endl;
+    }
 
-    earth_base.decryptMessage(earth_base.keySession, input_path, output_path);
+    /* earth_base.setKeySession(*pubEarth); */
+
+    earth_base.decryptMessage(shared_key, input_path, output_path);
     std::cout << "Decryption completed" << std::endl;
 
     std::cout << "Decrypted image" << std::endl;
