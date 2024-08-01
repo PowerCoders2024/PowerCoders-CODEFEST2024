@@ -4,23 +4,23 @@
 
 #ifndef SATELLITE_H
 #define SATELLITE_H
-#include "../CryptoUser/CryptoUser.h"
 #include <wolfssl/ssl.h>
 
+#include "../CryptoUser/CryptoUser.h"
 
 class Satellite : public CryptoUser {
-    const char *serverHint = "satellite_identity";
-    const char *client_identity = "earth_identity";
+	const char *serverHint = "satellite_identity";
+	const char *client_identity = "earth_identity";
 
 public:
-    WOLFSSL *ssl;
+	WOLFSSL *ssl;
 
-    Satellite();
+	Satellite();
 
-    //Inicializar
-    int initializeSatellite();
+	// Inicializar
+	int initializeSatellite();
 
-    unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity);
+	unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity);
 };
 
-#endif //SATELLITE_H
+#endif	// SATELLITE_H
