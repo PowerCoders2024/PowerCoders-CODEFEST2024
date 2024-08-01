@@ -1,4 +1,5 @@
 #include "Satellite.h"
+#include <wolfssl/ssl.h>
 
 Satellite::Satellite(): CryptoUser() {
 }

@@ -1,4 +1,5 @@
 #include "EarthBase.h"
+#include <wolfssl/ssl.h>
 
 EarthBase::EarthBase() : CryptoUser() {
 

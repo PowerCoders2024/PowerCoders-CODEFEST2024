@@ -21,6 +21,7 @@ EarthBase earth_base;
 Satellite satellite; 
 
 int main(int argc, char* argv[]) {
+    
     if (argc != 4) {
         std::cerr << "Uso: " << argv[0] << " <operation> <input_path> <output_path>" << std::endl;
         return 1;
@@ -113,7 +114,6 @@ void decrypt(const std::string& input_path, const std::string& output_path) {
     std::cout << "output_path=" << output_path << std::endl;
 
     byte shared_key[32];
-    printf("entrsaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaao");
 
     std::ifstream file("shared_key.bin", std::ios::binary);
     if (!file) {
