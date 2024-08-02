@@ -142,10 +142,14 @@ void CipherSuite::initStreams(const std::string& input_path, const std::string& 
 }
 
 void CipherSuite::runThreads(byte* key) {
+	int max_concurrent_threads = 0;
+
 	size_t block_size, trailing_size;
 
 	computeNumThreads();
 	computeBlockSize(block_size, trailing_size);
+
+	std::cout << "Block size: " << block_size << std::endl;
 
 	for (int i = 0; i < t_params.threads_to_run; i++) {
 		if (i == t_params.threads_to_run - 1) block_size = trailing_size;
@@ -165,6 +169,8 @@ void CipherSuite::runThreads(byte* key) {
 									  std::ref(t_params.active_threads), std::ref(t_params.mtx_count),
 									  std::ref(t_params.cv_thread_pool), std::ref(t_params.cv_sync));
 
+		max_concurrent_threads = std::max(max_concurrent_threads, t_params.active_threads);
+
 		if (i % THREAD_POOL_SIZE == 0) {
 			for (auto& t : t_params.threads) {
 				if (t.joinable()) {
@@ -182,6 +188,8 @@ void CipherSuite::runThreads(byte* key) {
 	}
 
 	t_params.threads.clear();
+
+	std::cout << "Max concurrent threads: " << max_concurrent_threads << std::endl;
 }
 
 int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
