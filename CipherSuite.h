@@ -14,7 +14,8 @@
 #include <vector>
 #include <fstream>
 
-#define THREAD_POOL_SIZE 5
+#define THREAD_POOL_SIZE 10
+#define MAX_LOAD_SIZE ((long)300000000 / THREAD_POOL_SIZE)	// 300 MB - Max size of concurrent file processing buffers
 #define AUTH_TAG_SIZE 16
 #define IV_SIZE 16
 #define AUTH_IN_SIZE 16
@@ -29,11 +30,11 @@ public:
 
 	std::ifstream infile;
 	std::ofstream outfile;
-	size_t block_size;
-	size_t last_block_size;
+	size_t file_size;
 
 	struct thread_params {
 		bool encrypt_mode;
+		int threads_to_run;
 		int active_threads;
 		std::mutex sync_mtx;
 		std::mutex thread_pool_control;
@@ -51,12 +52,13 @@ public:
 		wc_InitRng(&this->rng);
 	};
 
-	size_t initStreams(const std::string& input_path, const std::string& output_path);
-	void computeBlockSizes(int file_size);
+	void computeBlockSize(size_t& block_size, size_t& trailing_size);
+	void initStreams(const std::string& input_path, const std::string& output_path);
 	void performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);
 	void runThreads(byte* key);
 	void keyGenerator(ecc_key& key);
 	static int PSKKeyGenerator(byte* pskKey, int keySize);
+	void computeNumThreads();
 	void initializeCipherSuite();
 };
 
