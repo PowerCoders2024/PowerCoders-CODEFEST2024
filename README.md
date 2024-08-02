@@ -47,8 +47,7 @@ Archivo principal del proyecto que coordina la ejecución de las diferentes part
 ### `makefile`
 Archivo utilizado por `make` para construir el proyecto. Define las reglas de compilación y las dependencias entre los archivos fuente y los archivos objeto.
 ### `pre-compile.sh`
-Script de pre-compilación que puede realizar tareas previas necesarias antes de la compilación del proyecto, como la configuración del entorno o la limpieza de compilaciones anteriores.
-
+Script de pre-compilación que realiza las tareas previas necesarias antes de la compilación del proyecto (configuración del entorno).
 
 # Instalación
 Sigue estos pasos para instalar las dependencias y configurar el entorno de desarrollo:
@@ -62,4 +61,25 @@ Sigue estos pasos para instalar las dependencias y configurar el entorno de desa
    ```sh
    ./pre-compile.sh
    ./compile.sh
+
+## Instalación manual 
+En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh` y `compile.sh` se puede hacer la configuración de entorno manualmente de la siguiente forma:
+
+1. Configurar, compilar e instalar wolfSSL:
+    ```sh
+    cd ./libraries/wolfssl-5.7.2
+    ./configure --enable-all
+    make
+    sudo make install
+2.Compilar el proyecto:
+    
+    g++  *.cpp */*.cpp *.h */*.h -o main.out --optimize=fast -std=c++20 -lwolfssl
+
+3. Ejecutar el archivo principal:
+
+    ```sh
+    ./main <instruction> <input path> <output path>
+
+
+    
 
