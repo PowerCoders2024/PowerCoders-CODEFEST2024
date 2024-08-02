@@ -12,9 +12,9 @@ class EarthBase : public CryptoUser {
 public:
 	WOLFSSL *ssl;
 	EarthBase();
-	void initializeEarthBase();
+	unsigned int initializeEarthBase();
 	unsigned int receiveServerHint(Satellite satellite);
-	void sendIdentity(Satellite satellite);
+	unsigned int sendIdentity(Satellite satellite);
 };
 
 #endif	// EARTHBASE_H
