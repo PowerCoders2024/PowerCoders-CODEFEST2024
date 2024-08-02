@@ -61,6 +61,8 @@ Sigue estos pasos para instalar las dependencias y configurar el entorno de desa
    ```sh
    ./pre-compile.sh
    ./compile.sh
+> [!WARNING]
+> Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente.
 
 ## Instalación manual 
 En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh` y `compile.sh` se puede hacer la configuración de entorno manualmente de la siguiente forma:
@@ -71,6 +73,7 @@ En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh`
     ./configure --enable-all
     make
     sudo make install
+    cd ../..
 2.Compilar el proyecto:
     
     g++  *.cpp */*.cpp *.h */*.h -o main.out --optimize=fast -std=c++20 -lwolfssl
@@ -80,4 +83,3 @@ En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh`
     ```sh
     ./main <instruction> <input path> <output path>
 
-### Nota: Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente. 
