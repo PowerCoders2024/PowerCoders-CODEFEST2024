@@ -13,5 +13,6 @@
 *.out
 
 #Library files
-libraries/
+libraries/*/
+libraries/*.zip
 
