@@ -80,6 +80,4 @@ En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh`
     ```sh
     ./main <instruction> <input path> <output path>
 
-
-    
-
+### Nota: Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente. 
