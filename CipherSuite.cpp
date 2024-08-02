@@ -9,16 +9,6 @@
 #include <thread>
 #include <vector>
 
-CipherSuite::CipherSuite() {
-	/* std::cout << "cipher init" << std::endl;
-
-	byte ivGen[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-					0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-	std::memcpy(this->iv, ivGen, IV_SIZE); */
-
-	wc_InitRng(&this->rng);
-}
-
 void CipherSuite::initializeCipherSuite() {
 	// Inicialización del constructor
 	std::cout << "cipher init" << std::endl;
@@ -26,7 +16,6 @@ void CipherSuite::initializeCipherSuite() {
 	// TODO: Cambiar el IV por uno generado aleatoriamente
 	byte ivGen[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
 	std::memcpy(this->iv, ivGen, 16);
-	// wc_Initng(&this->rng);
 }
 
 void CipherSuite::keyGenerator(ecc_key& key) {
@@ -35,56 +24,54 @@ void CipherSuite::keyGenerator(ecc_key& key) {
 	wc_ecc_make_key(&this->rng, 8, &key);  // Danny cambio de 32 a 8
 }
 
-void encrypt_block(CipherSuite& cipherSuite, byte* key, std::vector<byte> buffer, const size_t read_size, int thread_id,
-				   std::ofstream& outfile, std::mutex& sync_mtx, std::mutex& thread_pool_control, int& active_threads,
-				   int& mtx_count, std::condition_variable& cv_thread_pool, std::condition_variable& cv_sync) {
+void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::vector<byte> buffer,
+				   std::array<byte, IV_SIZE> iv_vector, std::array<byte, AUTH_TAG_SIZE> authTag_vector,
+				   const size_t read_size, int thread_id, std::ofstream& outfile, std::mutex& sync_mtx,
+				   std::mutex& thread_pool_control, int active_threads, int& mtx_count,
+				   std::condition_variable& cv_thread_pool, std::condition_variable& cv_sync) {
 	{
 		std::unique_lock<std::mutex> lock(thread_pool_control);
 		cv_thread_pool.wait(lock, [&] { return active_threads < THREAD_POOL_SIZE; });
 		++active_threads;
 	}
 
-	/* std::cout << "Encrypting thread #" << thread_id << ":..." << std::endl; */
-	byte* iv = std::array<byte, IV_SIZE>().data();
-	byte* authTag = std::array<byte, AUTH_TAG_SIZE>().data();
+	std::cout << "Encrypting thread #" << thread_id << ":..." << std::endl;
 
-	std::vector<byte> cipher_block(read_size);
+	std::vector<byte> out(read_size);
+	byte* iv = iv_vector.data();
+	byte* authTag = authTag_vector.data();
 
-	Aes aes;
-	wc_AesInit(&aes, NULL, 0);
-	wc_AesGcmSetKey(&aes, key, 32);
+	int ret = 0;
 
-	wc_RNG_GenerateBlock(&cipherSuite.rng, iv, IV_SIZE);
-	/* std::cout << "Before check thread #" << thread_id << std::endl;
-	std::cout << "Cipher block size: " << cipher_block.size() << std::endl;
-	std::cout << "Buffer size: " << read_size << std::endl;
-
-	for (int i = 0; i < 1; i++) std::cout << buffer[i] << " " << i << " Exist" << std::endl; */
-
-	int ret = wc_AesGcmEncrypt(&aes, cipher_block.data(), buffer.data(), read_size, iv, IV_SIZE, authTag, AUTH_TAG_SIZE,
-							   cipherSuite.authIn, AUTH_IN_SIZE);
+	if (encrypt_mode) {
+		wc_RNG_GenerateBlock(&cipherSuite->rng, iv, IV_SIZE);
+		ret = wc_AesGcmEncrypt(&cipherSuite->aes, out.data(), buffer.data(), read_size, iv, IV_SIZE, authTag, AUTH_TAG_SIZE,
+							   cipherSuite->authIn, AUTH_IN_SIZE);
+	} else
+		ret = wc_AesGcmDecrypt(&cipherSuite->aes, out.data(), buffer.data(), read_size, iv, IV_SIZE, authTag, AUTH_TAG_SIZE,
+							   cipherSuite->authIn, AUTH_IN_SIZE);
 
 	if (ret != 0) {
-		std::cerr << "Encryption error: " << ret << std::endl;
+		std::cerr << (encrypt_mode ? "Encrypt" : "Decrypt") << " error: " << ret << std::endl;
 	}
 
-	// std::cout << "Encrypted thread #" << thread_id << std::endl;
+	std::cout << "Encrypted thread #" << thread_id << std::endl;
 
 	{
 		std::unique_lock<std::mutex> lock(sync_mtx);
 		cv_sync.wait(lock, [&] { return mtx_count == thread_id; });
 	}
-	/* std::cout << "Writing thread #" << thread_id << std::endl; */
-	outfile.write(reinterpret_cast<const char*>(iv), IV_SIZE);
-	outfile.write(reinterpret_cast<const char*>(authTag), AUTH_TAG_SIZE);
-	outfile.write(reinterpret_cast<const char*>(cipher_block.data()), read_size);
-	/* std::cout << "Wrote thread #" << thread_id << std::endl; */
+	std::cout << "Writing thread #" << thread_id << std::endl;
+	if (encrypt_mode) {
+		outfile.write(reinterpret_cast<const char*>(iv), IV_SIZE);
+		outfile.write(reinterpret_cast<const char*>(authTag), AUTH_TAG_SIZE);
+	}
+	outfile.write(reinterpret_cast<const char*>(out.data()), read_size);
+	std::cout << "Wrote thread #" << thread_id << std::endl;
 	{
 		mtx_count++;
 		cv_sync.notify_all();
 	}
-
-	wc_AesFree(&aes);
 
 	{
 		std::lock_guard<std::mutex> lock(thread_pool_control);
@@ -93,147 +80,81 @@ void encrypt_block(CipherSuite& cipherSuite, byte* key, std::vector<byte> buffer
 	}
 }
 
-void decrypt_block(CipherSuite& cipherSuite, byte* key, byte* buffer, byte* decrypted_block, byte* iv, byte* authTag,
-				   const size_t& read_size, int& thread_id, std::mutex& mtx, std::condition_variable& cv,
-				   int& active_threads) {
-	{
-		std::unique_lock<std::mutex> lock(mtx);
-		cv.wait(lock, [&] { return active_threads < THREAD_POOL_SIZE; });
-		++active_threads;
-	}
-
-	/* std::cout << "Decrypting thread #" << thread_id << ":..." << std::endl; */
-	Aes aes;
+void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::string& input_path,
+								   const std::string& output_path) {
+	t_params.encrypt_mode = encrypt_mode;
+	t_params.active_threads = 0;
+	t_params.threads = std::vector<std::thread>(THREAD_POOL_SIZE);
 	wc_AesInit(&aes, NULL, 0);
 	wc_AesGcmSetKey(&aes, key, 32);
 
-	int ret = wc_AesGcmDecrypt(&aes, decrypted_block, buffer, read_size, iv, IV_SIZE, authTag, AUTH_TAG_SIZE,
-							   cipherSuite.authIn, sizeof(cipherSuite.authIn));
-	if (ret != 0) {
-		std::cout << "Decryption error: " << ret << std::endl;
-	}
-	/* std::cout << "Decrypted thread #" << thread_id << std::endl; */
+	size_t file_size = initStreams(input_path, output_path);
 
-	{
-		std::lock_guard<std::mutex> lock(mtx);
-		--active_threads;
-		cv.notify_all();
+	computeBlockSizes(file_size);
+
+	runThreads(key);
+
+	wc_AesFree(&aes);
+	infile.close();
+	outfile.close();
+}
+
+void CipherSuite::computeBlockSizes(int file_size) {
+	std::cout << t_params.encrypt_mode << std::endl;
+	if (t_params.encrypt_mode) {
+		block_size = file_size / THREAD_POOL_SIZE;
+		last_block_size = file_size - block_size * (THREAD_POOL_SIZE - 1);
+	} else {
+		block_size = (file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) / THREAD_POOL_SIZE;
+		last_block_size = (file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) - block_size * (THREAD_POOL_SIZE - 1);
 	}
 }
 
-void CipherSuite::encryptAES(byte key[], const std::string& input_path, const std::string& output_path) {
-	wc_AesInit(&this->aes, NULL, 0);
-	wc_AesGcmSetKey(&this->aes, key, 32);
-
+size_t CipherSuite::initStreams(const std::string& input_path, const std::string& output_path) {
 	std::filesystem::path p(input_path);
-	unsigned long file_size = std::filesystem::file_size(p);
-	size_t block_size = file_size / THREAD_POOL_SIZE;
 
-	size_t last_block_size = file_size - block_size * (THREAD_POOL_SIZE - 1);
-	std::ifstream infile(input_path, std::ios::binary);
-	std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
+	infile.open(input_path, std::ios::binary);
 
+	outfile.open(output_path, std::ios::binary | std::ios::trunc);
+
+	std::cout << "Opening files" << std::endl;
 	if (!infile.is_open() || !outfile.is_open()) {
-		std::cout << "Error opening files." << std::endl;
-		return;
+		std::cerr << "Error opening files." << std::endl;
+		return 0;
 	}
 
-	std::mutex thread_pool_control, sync_mtx;
-	std::condition_variable cv_thread_pool, cv_sync;
-	int mtx_count = 0;
-	int active_threads = 0;
-	std::vector<std::thread> threads(THREAD_POOL_SIZE);
+	return std::filesystem::file_size(p);
+}
 
+void CipherSuite::runThreads(byte* key) {
 	for (int i = 0; i < THREAD_POOL_SIZE; i++) {
 		size_t current_block_size = (i == THREAD_POOL_SIZE - 1) ? last_block_size : block_size;
 
 		std::vector<byte> buffer(current_block_size);
+		std::array<byte, IV_SIZE> iv;
+		std::array<byte, AUTH_TAG_SIZE> authTag;
 
+		if (!t_params.encrypt_mode) {
+			infile.read(reinterpret_cast<char*>(iv.data()), IV_SIZE);
+			infile.read(reinterpret_cast<char*>(authTag.data()), AUTH_TAG_SIZE);
+		}
 		infile.read(reinterpret_cast<char*>(buffer.data()), current_block_size);
 
 		const size_t read_size = infile.gcount();
 
 		if (read_size == 0) break;	// No more data to read
 
-		threads.emplace_back(encrypt_block, std::ref(*this), key, buffer, read_size, i, std::ref(outfile),
-							 std::ref(sync_mtx), std::ref(thread_pool_control), std::ref(active_threads),
-							 std::ref(mtx_count), std::ref(cv_thread_pool), std::ref(cv_sync));
+		t_params.threads.emplace_back(operate_block, this, t_params.encrypt_mode, key, buffer, iv, authTag, read_size, i,
+									  std::ref(outfile), std::ref(t_params.sync_mtx), std::ref(t_params.thread_pool_control),
+									  t_params.active_threads, std::ref(t_params.mtx_count),
+									  std::ref(t_params.cv_thread_pool), std::ref(t_params.cv_sync));
 	}
 
-	for (auto& t : threads) {
+	for (auto& t : t_params.threads) {
 		if (t.joinable()) {
 			t.join();
 		}
 	}
-
-	infile.close();
-	outfile.close();
-}
-
-void CipherSuite::decryptAES(byte key[], const std::string& input_path, const std::string& output_path) {
-	wc_AesInit(&this->aes, NULL, 0);
-	wc_AesGcmSetKey(&this->aes, key, 32);
-
-	std::filesystem::path p(input_path);
-	unsigned long file_size = std::filesystem::file_size(p);
-	size_t block_size = (file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) / THREAD_POOL_SIZE;
-
-	size_t last_block_size =
-		(file_size - THREAD_POOL_SIZE * (IV_SIZE + AUTH_TAG_SIZE)) - block_size * (THREAD_POOL_SIZE - 1);
-
-	std::ifstream infile(input_path, std::ios::binary);
-	std::ofstream outfile(output_path, std::ios::binary | std::ios::trunc);
-
-	if (!infile.is_open() || !outfile.is_open()) {
-		std::cout << "Error opening files." << std::endl;
-		return;
-	}
-
-	std::mutex mtx;
-	std::condition_variable cv;
-	int active_threads = 0;
-	const int max_threads = THREAD_POOL_SIZE;
-	std::vector<std::thread> threads;
-
-	for (int i = 0; i < THREAD_POOL_SIZE; i++) {
-		size_t current_block_size = (i == THREAD_POOL_SIZE - 1) ? last_block_size : block_size;
-
-		std::vector<byte> buffer(current_block_size);
-		std::vector<byte> decrypted_block(current_block_size);
-		std::array<byte, IV_SIZE> iv;
-		std::array<byte, AUTH_TAG_SIZE> authTag;
-
-		void decrypt_block(CipherSuite & cipherSuite, byte * key, byte * buffer, byte * decrypted_block, byte * iv,
-						   byte * authTag, const size_t& read_size, int& thread_id, std::mutex& mtx,
-						   std::condition_variable& cv, int& active_threads);
-		infile.read(reinterpret_cast<char*>(iv.data()), IV_SIZE);
-		infile.read(reinterpret_cast<char*>(authTag.data()), AUTH_TAG_SIZE);
-		infile.read(reinterpret_cast<char*>(buffer.data()), current_block_size);
-
-		const size_t read_size = buffer.size();
-		if (read_size == 0) break;	// No more data to read
-
-		threads.emplace_back(decrypt_block, std::ref(*this), key, buffer.data(), decrypted_block.data(), iv.data(),
-							 authTag.data(), std::ref(read_size), std::ref(i), std::ref(mtx), std::ref(cv),
-							 std::ref(active_threads));
-
-		for (auto& t : threads) {
-			if (t.joinable()) {
-				t.join();
-			}
-		}
-
-		outfile.write(reinterpret_cast<const char*>(decrypted_block.data()), read_size);
-	}
-
-	for (auto& t : threads) {
-		if (t.joinable()) {
-			t.join();
-		}
-	}
-
-	infile.close();
-	outfile.close();
 }
 
 int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {

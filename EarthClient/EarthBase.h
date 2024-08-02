@@ -13,8 +13,8 @@ public:
 	WOLFSSL *ssl;
 	EarthBase();
 	void initializeEarthBase();
-	unsigned int receiveServerHint(Satellite satellite);
-	void sendIdentity(Satellite satellite);
+	unsigned int receiveServerHint(Satellite &satellite);
+	void sendIdentity(Satellite &satellite);
 };
 
 #endif	// EARTHBASE_H

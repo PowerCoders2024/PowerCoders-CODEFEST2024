@@ -28,9 +28,9 @@ void CryptoUser::setKeySession(ecc_key userPub) {
 }
 
 void CryptoUser::encryptMessage(byte key[], const std::string &input_path, const std::string &output_path) {
-	this->cipher_suite.encryptAES(key, input_path, output_path);
+	this->cipher_suite.performOperation(true, key, input_path, output_path);
 }
 
 void CryptoUser::decryptMessage(byte key[], const std::string &input_path, const std::string &output_path) {
-	this->cipher_suite.decryptAES(key, input_path, output_path);
+	this->cipher_suite.performOperation(false, key, input_path, output_path);
 }

@@ -6,7 +6,7 @@ EarthBase::EarthBase() : CryptoUser() {}
 
 void EarthBase::initializeEarthBase() {
 	std::cout << "Client: Client Hello" << " Communication established -->" << std::endl;
-	WOLFSSL_CTX *ctx = wolfSSL_CTX_new(wolfTLS_client_method());
+	WOLFSSL_CTX* ctx = wolfSSL_CTX_new(wolfTLS_client_method());
 	if (ctx == nullptr) {
 		printf("wolfSSL_CTX_new error.\n");
 	}
@@ -16,9 +16,9 @@ void EarthBase::initializeEarthBase() {
 	}
 }
 
-unsigned int EarthBase::receiveServerHint(Satellite satellite) {
+unsigned int EarthBase::receiveServerHint(Satellite& satellite) {
 	std::cout << "<-- Server: Server Hello (ServerExchange Hint)" << std::endl;
-	const char *idHintRetrieved = wolfSSL_get_psk_identity_hint(satellite.ssl);
+	const char* idHintRetrieved = wolfSSL_get_psk_identity_hint(satellite.ssl);
 	if (std::strcmp(idHintRetrieved, this->server_hint) == 0) {
 		std::cout << "Client: Hint recongnized= " << idHintRetrieved << std::endl;
 	} else {
@@ -31,7 +31,7 @@ unsigned int EarthBase::receiveServerHint(Satellite satellite) {
 	return sizeof(this->pskKey);
 }
 
-void EarthBase::sendIdentity(Satellite satellite) {
+void EarthBase::sendIdentity(Satellite& satellite) {
 	std::cout << "Client: Client Exchange Identity -->  " << std::endl;
 
 	unsigned int clientVerify = satellite.verifyClientIdentity(this->ssl, this->client_identity);

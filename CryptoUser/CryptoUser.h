@@ -20,7 +20,6 @@ public:
 	byte keySession[AES_256_KEY_SIZE];
 	word32 keySessionSz = AES_256_KEY_SIZE;
 	CipherSuite cipher_suite = CipherSuite();
-	;
 	static byte pskKey[16];
 
 	CryptoUser();
