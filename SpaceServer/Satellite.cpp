@@ -51,6 +51,14 @@ unsigned int Satellite::initializeSatellite()
 	return 1;
 }
 
+
+/**
+ * @brief Verifica la identidad del cliente.
+ *
+ * @param ssl Estructura WOLFSSL para la comunicación.
+ * @param identity Identidad del cliente.
+ * @return unsigned int Tamaño de la clave PSK si la identidad es verificada, 0 en caso contrario.
+ */
 unsigned int Satellite::verifyClientIdentity(WOLFSSL *ssl, const char *identity)
 {
 	if (identity == nullptr)

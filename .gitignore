@@ -9,6 +9,7 @@
 *.txt
 *.bin
 *.in
+*.tif
 
 # Executable files
 *.out

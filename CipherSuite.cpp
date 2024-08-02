@@ -8,7 +8,14 @@
 #include <mutex>
 #include <thread>
 #include <vector>
+#include <array>
 
+/**
+ * @brief Inicializa el CipherSuite.
+ *
+ * Esta función inicializa el conjunto de cifrado, asignando un IV (Vector de Inicialización) 
+ * predefinido a la instancia del objeto CipherSuite.
+ */
 void CipherSuite::initializeCipherSuite() {
 	// Inicialización del constructor
 	std::cout << "cipher init" << std::endl;
@@ -18,12 +25,36 @@ void CipherSuite::initializeCipherSuite() {
 	std::memcpy(this->iv, ivGen, 16);
 }
 
+/**
+ * @brief Genera una clave ECC.
+ *
+ * @param key Estructura ecc_key donde se almacenará la clave generada.
+ */
 void CipherSuite::keyGenerator(ecc_key& key) {
 	wc_ecc_init(&key);
 	wc_ecc_set_rng(&key, &this->rng);
 	wc_ecc_make_key(&this->rng, 8, &key);  // Danny cambio de 32 a 8
 }
 
+/**
+ * @brief Realiza operaciones de cifrado o descifrado en un bloque de datos.
+ *
+ * @param cipherSuite Puntero al objeto CipherSuite.
+ * @param encrypt_mode Modo de operación (true para cifrado, false para descifrado).
+ * @param key Clave utilizada para la operación de cifrado/descifrado.
+ * @param buffer Datos a ser cifrados o descifrados.
+ * @param iv_vector Vector de inicialización.
+ * @param authTag_vector Etiqueta de autenticación.
+ * @param read_size Tamaño del bloque de datos.
+ * @param thread_id ID del hilo que realiza la operación.
+ * @param outfile Archivo de salida para escribir los datos cifrados/descifrados.
+ * @param sync_mtx Mutex para la sincronización de escritura.
+ * @param thread_pool_control Mutex para el control del pool de hilos.
+ * @param active_threads Número de hilos activos.
+ * @param mtx_count Contador de mutex.
+ * @param cv_thread_pool Variable de condición para el pool de hilos.
+ * @param cv_sync Variable de condición para la sincronización de escritura.
+ */
 void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::vector<byte> buffer,
 				   std::array<byte, IV_SIZE> iv_vector, std::array<byte, AUTH_TAG_SIZE> authTag_vector,
 				   const size_t read_size, int thread_id, std::ofstream& outfile, std::mutex& sync_mtx,
@@ -79,6 +110,14 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
 	}
 }
 
+/**
+ * @brief Realiza la operación de cifrado o descifrado en un archivo.
+ *
+ * @param encrypt_mode Modo de operación (true para cifrado, false para descifrado).
+ * @param key Clave utilizada para la operación de cifrado/descifrado.
+ * @param input_path Ruta del archivo de entrada.
+ * @param output_path Ruta del archivo de salida.
+ */
 void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::string& input_path,
 								   const std::string& output_path) {
 	t_params.encrypt_mode = encrypt_mode;
@@ -96,6 +135,12 @@ void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::str
 	outfile.close();
 }
 
+/**
+ * @brief Calcula el tamaño de los bloques de datos y el tamaño del bloque final.
+ *
+ * @param block_size Referencia al tamaño del bloque.
+ * @param trailing_size Referencia al tamaño del bloque final.
+ */
 void CipherSuite::computeBlockSize(size_t& block_size, size_t& trailing_size) {
 	if (t_params.encrypt_mode) {
 		block_size = file_size / t_params.threads_to_run;
@@ -107,6 +152,9 @@ void CipherSuite::computeBlockSize(size_t& block_size, size_t& trailing_size) {
 	}
 }
 
+/**
+ * @brief Calcula el número de hilos a ejecutar.
+ */
 void CipherSuite::computeNumThreads() {
 	if (t_params.encrypt_mode) {
 		t_params.threads_to_run = std::max(10, (int)(file_size / MAX_LOAD_SIZE));
@@ -125,6 +173,12 @@ void CipherSuite::computeNumThreads() {
 	std::cout << "Threads to run: " << t_params.threads_to_run << std::endl;
 }
 
+/**
+ * @brief Inicializa los flujos de entrada y salida para los archivos.
+ *
+ * @param input_path Ruta del archivo de entrada.
+ * @param output_path Ruta del archivo de salida.
+ */
 void CipherSuite::initStreams(const std::string& input_path, const std::string& output_path) {
 	std::filesystem::path p(input_path);
 	file_size = std::filesystem::file_size(p);
@@ -141,6 +195,11 @@ void CipherSuite::initStreams(const std::string& input_path, const std::string& 
 	}
 }
 
+/**
+ * @brief Ejecuta los hilos para realizar la operación de cifrado/descifrado.
+ *
+ * @param key Clave utilizada para la operación de cifrado/descifrado.
+ */
 void CipherSuite::runThreads(byte* key) {
 	int max_concurrent_threads = 0;
 
@@ -192,6 +251,13 @@ void CipherSuite::runThreads(byte* key) {
 	std::cout << "Max concurrent threads: " << max_concurrent_threads << std::endl;
 }
 
+/**
+ * @brief Genera una clave PSK (Pre-Shared Key).
+ *
+ * @param pskKey Buffer donde se almacenará la clave PSK generada.
+ * @param keySize Tamaño de la clave PSK.
+ * @return int 0 si la generación de la clave PSK fue exitosa, otro valor en caso de error.
+ */
 int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
 	WC_RNG rng;
 

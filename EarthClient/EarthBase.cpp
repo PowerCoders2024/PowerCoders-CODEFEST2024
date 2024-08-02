@@ -22,6 +22,12 @@ unsigned int EarthBase::initializeEarthBase()
 	return 1;
 }
 
+/**
+ * @brief Recibe el hint del servidor.
+ *
+ * @param satellite Objeto Satellite para la comunicación.
+ * @return unsigned int Tamaño de la clave PSK si el hint es reconocido, 0 en caso contrario.
+ */
 unsigned int EarthBase::receiveServerHint(Satellite &satellite)
 {
 	std::cout << "<-- Server: Server Hello (ServerExchange Hint)" << std::endl;
@@ -41,6 +47,12 @@ unsigned int EarthBase::receiveServerHint(Satellite &satellite)
 	return sizeof(this->pskKey);
 }
 
+/**
+ * @brief Envía la identidad del cliente al servidor.
+ *
+ * @param satellite Objeto Satellite para la comunicación.
+ * @return unsigned int 1 si la autenticación PSK fue exitosa, 0 en caso contrario.
+ */
 unsigned int EarthBase::sendIdentity(Satellite &satellite)
 {
 	std::cout << "Client: Client Exchange Identity -->  " << std::endl;
