@@ -4,6 +4,9 @@
 
 Satellite::Satellite() : CryptoUser() {}
 
+/**
+ * @brief Inicializa los datos para la operación.
+ **/
 unsigned int Satellite::initializeSatellite()
 {
 	wolfSSL_Init();

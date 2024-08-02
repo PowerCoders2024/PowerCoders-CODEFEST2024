@@ -31,7 +31,7 @@ public:
 	std::ifstream infile;
 	std::ofstream outfile;
 	size_t file_size;
-
+	//TODO hacer privados métodos y atributos 
 	struct thread_params {
 		bool encrypt_mode;
 		int threads_to_run;

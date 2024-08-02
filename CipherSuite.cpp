@@ -17,7 +17,6 @@
  * predefinido a la instancia del objeto CipherSuite.
  */
 void CipherSuite::initializeCipherSuite() {
-	// Inicialización del constructor
 	std::cout << "cipher init" << std::endl;
 
 	// TODO: Cambiar el IV por uno generado aleatoriamente
@@ -37,21 +36,21 @@ void CipherSuite::keyGenerator(ecc_key& key) {
 }
 
 /**
- * @brief Realiza operaciones de cifrado o descifrado en un bloque de datos.
+ * @brief Ejecuta la operación (cifrar o decifrar) sobre un buffer, posterior a la ejecución de la operación envía la salida a través de un stream a un archivo, esto lo hace de manera ordenada, asegurando que el archivo de salida se escribe en el mismo orden en el que se lee
  *
- * @param cipherSuite Puntero al objeto CipherSuite.
+ * @param cipherSuite Puntero al objeto CipherSuite con los miembros necesarios para ejecutar la operación.
  * @param encrypt_mode Modo de operación (true para cifrado, false para descifrado).
  * @param key Clave utilizada para la operación de cifrado/descifrado.
- * @param buffer Datos a ser cifrados o descifrados.
- * @param iv_vector Vector de inicialización.
- * @param authTag_vector Etiqueta de autenticación.
- * @param read_size Tamaño del bloque de datos.
- * @param thread_id ID del hilo que realiza la operación.
- * @param outfile Archivo de salida para escribir los datos cifrados/descifrados.
- * @param sync_mtx Mutex para la sincronización de escritura.
- * @param thread_pool_control Mutex para el control del pool de hilos.
+ * @param buffer Buffer de los datos a operar.
+ * @param iv_vector Vector de inicialización (Estructura vacía si está en el modo desencriptar).
+ * @param authTag_vector Etiqueta de autenticación (Estructura vacía si está en el modo desencriptar).
+ * @param read_size Tamaño del buffer proveído .
+ * @param thread_id ID del hilo que realiza la operación, indica el orden en el que se va a esribir en la salida.
+ * @param outfile Stream de salida para escribir los datos cifrados/descifrados.
+ * @param sync_mtx Semáforo mutex para la sincronización de escritura.
+ * @param thread_pool_control Semáforo mutex para el control del pool de hilos.
  * @param active_threads Número de hilos activos.
- * @param mtx_count Contador de mutex.
+ * @param mtx_count Contador de hilos que ejecutaron y escribieron.
  * @param cv_thread_pool Variable de condición para el pool de hilos.
  * @param cv_sync Variable de condición para la sincronización de escritura.
  */
@@ -60,6 +59,7 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
 				   const size_t read_size, int thread_id, std::ofstream& outfile, std::mutex& sync_mtx,
 				   std::mutex& thread_pool_control, int& active_threads, int& mtx_count,
 				   std::condition_variable& cv_thread_pool, std::condition_variable& cv_sync) {
+	// Bloqueo de sincronización de thread pool
 	{
 		std::unique_lock<std::mutex> lock(thread_pool_control);
 		cv_thread_pool.wait(lock, [&] { return active_threads < THREAD_POOL_SIZE; });
@@ -85,19 +85,17 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
 	}
 
 	buffer.clear();
-	// std::cout << "Encrypted thread #" << thread_id << std::endl;
 
+	// Bloqueo de sincronización de salida
 	{
 		std::unique_lock<std::mutex> lock(sync_mtx);
 		cv_sync.wait(lock, [&] { return mtx_count == thread_id; });
 	}
-	// std::cout << "Writing thread #" << thread_id << std::endl;
 	if (encrypt_mode) {
 		outfile.write(reinterpret_cast<const char*>(iv), IV_SIZE);
 		outfile.write(reinterpret_cast<const char*>(authTag), AUTH_TAG_SIZE);
 	}
 	outfile.write(reinterpret_cast<const char*>(out.data()), read_size);
-	// std::cout << "Wrote thread #" << thread_id << std::endl;
 	{
 		mtx_count++;
 		cv_sync.notify_all();
@@ -111,7 +109,7 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
 }
 
 /**
- * @brief Realiza la operación de cifrado o descifrado en un archivo.
+ * @brief Interfaz de la operación de cifrado o descifrado en un archivo.
  *
  * @param encrypt_mode Modo de operación (true para cifrado, false para descifrado).
  * @param key Clave utilizada para la operación de cifrado/descifrado.
@@ -120,6 +118,8 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
  */
 void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::string& input_path,
 								   const std::string& output_path) {
+	
+	// Inicialización de los parámetros de la operación (propios y de wolfssl)
 	t_params.encrypt_mode = encrypt_mode;
 	t_params.active_threads = 0;
 	t_params.threads = std::vector<std::thread>(THREAD_POOL_SIZE);
@@ -153,7 +153,7 @@ void CipherSuite::computeBlockSize(size_t& block_size, size_t& trailing_size) {
 }
 
 /**
- * @brief Calcula el número de hilos a ejecutar.
+ * @brief Calcula el número de hilos a ejecutar, teniendo en cuenta el thread pool y el pico máximo de memoria a ejecutar concurrentemente.
  */
 void CipherSuite::computeNumThreads() {
 	if (t_params.encrypt_mode) {
@@ -174,7 +174,7 @@ void CipherSuite::computeNumThreads() {
 }
 
 /**
- * @brief Inicializa los flujos de entrada y salida para los archivos.
+ * @brief Inicializa los streams de entrada y salida para los archivos.
  *
  * @param input_path Ruta del archivo de entrada.
  * @param output_path Ruta del archivo de salida.
@@ -231,6 +231,9 @@ void CipherSuite::runThreads(byte* key) {
 		max_concurrent_threads = std::max(max_concurrent_threads, t_params.active_threads);
 
 		if (i % THREAD_POOL_SIZE == 0) {
+			// Cuando se llega al número máximo de hilos concurrentes se bloquea la creación de nuevos hilos
+			// Si no se bloquea puede generar condiciones de carrera
+			// TODO ... Verificar si dejando el mutex de thread pool antes de la escritura se cumple el numero de threadpools sin generar condiciones de carrera
 			for (auto& t : t_params.threads) {
 				if (t.joinable()) {
 					t.join();
@@ -240,6 +243,7 @@ void CipherSuite::runThreads(byte* key) {
 		}
 	}
 
+	// Espera a los hilos faltantes (Número de hilos % Thread Pool)
 	for (auto& t : t_params.threads) {
 		if (t.joinable()) {
 			t.join();

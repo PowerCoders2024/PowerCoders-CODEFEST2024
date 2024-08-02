@@ -1,7 +1,11 @@
 #include "CryptoUser.h"
 
 #include "../CipherSuite.h"
+
+
 byte CryptoUser::pskKey[16] = {0};
+
+
 CryptoUser::CryptoUser() {
 	// std::cout << "Claves generadas correctamente" << std::endl;
 	// this->cipher_suite.keyGenerator(this->priv );
@@ -11,6 +15,9 @@ CryptoUser::CryptoUser() {
 	}
 }
 
+/**
+ * @brief Inicializa la suite de operación 
+ */
 void CryptoUser::initializeCryptoUser() {
 	std::cout << "Suite iniciada" << std::endl;
 	this->cipher_suite.initializeCipherSuite();
