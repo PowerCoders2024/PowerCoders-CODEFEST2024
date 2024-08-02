@@ -5,16 +5,17 @@
 #include "../SpaceServer/Satellite.h"
 
 #include <wolfssl/ssl.h>
-class EarthBase : public CryptoUser {
+class EarthBase : public CryptoUser
+{
 	const char *client_identity = "earth_identity";
 	const char *server_hint = "satellite_identity";
 
 public:
 	WOLFSSL *ssl;
 	EarthBase();
-	void initializeEarthBase();
+	unsigned int initializeEarthBase();
 	unsigned int receiveServerHint(Satellite &satellite);
-	void sendIdentity(Satellite &satellite);
+	unsigned int sendIdentity(Satellite &satellite);
 };
 
-#endif	// EARTHBASE_H
+#endif // EARTHBASE_H

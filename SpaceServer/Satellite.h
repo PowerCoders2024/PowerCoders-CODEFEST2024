@@ -8,7 +8,8 @@
 #include "../CryptoUser/CryptoUser.h"
 
 #include <wolfssl/ssl.h>
-class Satellite : public CryptoUser {
+class Satellite : public CryptoUser
+{
 	const char *serverHint = "satellite_identity";
 	const char *client_identity = "earth_identity";
 
@@ -18,9 +19,9 @@ public:
 	Satellite();
 
 	// Inicializar
-	int initializeSatellite();
+	unsigned int initializeSatellite();
 
 	unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity);
 };
 
-#endif	// SATELLITE_H
+#endif // SATELLITE_H
