@@ -39,6 +39,7 @@ unsigned int Satellite::initializeSatellite()
 	else
 	{
 		std::cerr << "El hint No se guardo en memoria" << std::endl;
+		return  0;
 	}
 
 	this->ssl = wolfSSL_new(ctx);

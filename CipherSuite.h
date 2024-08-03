@@ -5,7 +5,6 @@
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/ecc.h>
 #include <wolfssl/wolfcrypt/types.h>
-
 #include <condition_variable>
 #include <filesystem>
 #include <iostream>
@@ -27,11 +26,9 @@ public:
 	byte authIn[AUTH_IN_SIZE] = {0};
 	WC_RNG rng;
 	static byte pskKey[16];
-
 	std::ifstream infile;
 	std::ofstream outfile;
 	size_t file_size;
-	//TODO hacer privados métodos y atributos 
 	struct thread_params {
 		bool encrypt_mode;
 		int threads_to_run;
@@ -53,10 +50,10 @@ public:
 	};
 
 	void computeBlockSize(size_t& block_size, size_t& trailing_size);
-	void initStreams(const std::string& input_path, const std::string& output_path);
-	void performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);
-	void runThreads(byte* key);
-	void keyGenerator(ecc_key& key);
+	unsigned int initStreams(const std::string& input_path, const std::string& output_path);
+	unsigned int performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);
+	unsigned int runThreads(byte* key);
+	unsigned int keyGenerator(ecc_key& key);
 	static int PSKKeyGenerator(byte* pskKey, int keySize);
 	void computeNumThreads();
 	void initializeCipherSuite();

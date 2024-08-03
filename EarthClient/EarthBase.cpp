@@ -42,8 +42,6 @@ unsigned int EarthBase::receiveServerHint(Satellite &satellite)
 		return 0;
 	}
 	std::cout << " <-- Server Hello Done" << std::endl;
-	// strncpy(identity, this->client_identity, id_max_len);
-	// strncpy(reinterpret_cast<char *>(key), psk_key, key_max_len);
 	return sizeof(this->pskKey);
 }
 
@@ -56,9 +54,7 @@ unsigned int EarthBase::receiveServerHint(Satellite &satellite)
 unsigned int EarthBase::sendIdentity(Satellite &satellite)
 {
 	std::cout << "Client: Client Exchange Identity -->  " << std::endl;
-
 	unsigned int clientVerify = satellite.verifyClientIdentity(this->ssl, this->client_identity);
-
 	if (clientVerify > 0)
 	{
 		std::cout << "Client: Finished (client) -->" << std::endl;

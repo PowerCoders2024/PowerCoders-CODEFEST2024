@@ -10,11 +10,12 @@
 #include <wolfssl/ssl.h>
 class Satellite : public CryptoUser
 {
-	const char *serverHint = "satellite_identity";
-	const char *client_identity = "earth_identity";
+
 
 public:
 	WOLFSSL *ssl;
+	const char *serverHint = "satellite_identity";
+	const char *client_identity = "earth_identity";
 
 	Satellite();
 

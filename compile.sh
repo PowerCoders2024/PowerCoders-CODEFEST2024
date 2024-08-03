@@ -23,5 +23,5 @@ success() {
 }
 
 info "Compilando..."
-g++  *.cpp */*.cpp *.h */*.h -o main.out --optimize=fast -std=c++20 -lwolfssl || handle_error "La compilación falló"
+g++  *.cpp */*.cpp *.h */*.h -o main.out --optimize=fast -std=c++20 -lwolfssl|| handle_error "La compilación falló"
 success "Compilación exitosa."

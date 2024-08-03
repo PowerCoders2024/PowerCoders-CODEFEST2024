@@ -18,8 +18,6 @@
  */
 void CipherSuite::initializeCipherSuite() {
 	std::cout << "cipher init" << std::endl;
-
-	// TODO: Cambiar el IV por uno generado aleatoriamente
 	byte ivGen[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
 	std::memcpy(this->iv, ivGen, 16);
 }
@@ -29,10 +27,24 @@ void CipherSuite::initializeCipherSuite() {
  *
  * @param key Estructura ecc_key donde se almacenará la clave generada.
  */
-void CipherSuite::keyGenerator(ecc_key& key) {
-	wc_ecc_init(&key);
-	wc_ecc_set_rng(&key, &this->rng);
-	wc_ecc_make_key(&this->rng, 8, &key);  // Danny cambio de 32 a 8
+unsigned int CipherSuite::keyGenerator(ecc_key& key) {
+	int ret;
+	ret = wc_ecc_init(&key);
+	if (ret != 0) {
+		return 0;
+	}
+	ret = wc_ecc_set_rng(&key, &this->rng);
+	if (ret != 0) {
+		wc_ecc_free(&key);
+		return 0;
+	}
+	ret = wc_ecc_make_key(&this->rng, 8, &key);
+	if (ret != 0) {
+		wc_ecc_free(&key);
+		return 0;
+	}
+
+	return 1; // Retornar 1 si todas las llamadas fueron exitosas
 }
 
 /**
@@ -116,23 +128,46 @@ void operate_block(CipherSuite* cipherSuite, bool encrypt_mode, byte* key, std::
  * @param input_path Ruta del archivo de entrada.
  * @param output_path Ruta del archivo de salida.
  */
-void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::string& input_path,
+unsigned int  CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::string& input_path,
 								   const std::string& output_path) {
-	
+	int ret ;
 	// Inicialización de los parámetros de la operación (propios y de wolfssl)
 	t_params.encrypt_mode = encrypt_mode;
 	t_params.active_threads = 0;
 	t_params.threads = std::vector<std::thread>(THREAD_POOL_SIZE);
-	wc_AesInit(&aes, NULL, 0);
-	wc_AesGcmSetKey(&aes, key, 32);
+	// Inicializar AES
+	ret = wc_AesInit(&aes, NULL, 0);
+	if (ret != 0) {
+		return 0; // Error
+	}
+	// Configurar la clave para AES-GCM
+	ret = wc_AesGcmSetKey(&aes, key, 32);
+	if (ret != 0) {
+		wc_AesFree(&aes);
+		return 0; // Error
+	}
 
-	initStreams(input_path, output_path);
+	// Inicializar flujos de entrada y salida
+	if (!initStreams(input_path, output_path)) {
+		wc_AesFree(&aes);
+		return 0; // Error
+	}
 
-	runThreads(key);
+	// Ejecutar los hilos de encriptación
+	if (!runThreads(key)) {
+		wc_AesFree(&aes);
+		infile.close();
+		outfile.close();
+		return 0; // Error
+	}
+
 
 	wc_AesFree(&aes);
 	infile.close();
 	outfile.close();
+
+	return 1; // Retornar 1 si todas las operaciones fueron exitosas
+
 }
 
 /**
@@ -179,20 +214,19 @@ void CipherSuite::computeNumThreads() {
  * @param input_path Ruta del archivo de entrada.
  * @param output_path Ruta del archivo de salida.
  */
-void CipherSuite::initStreams(const std::string& input_path, const std::string& output_path) {
+unsigned int  CipherSuite::initStreams(const std::string& input_path, const std::string& output_path) {
 	std::filesystem::path p(input_path);
 	file_size = std::filesystem::file_size(p);
-
 	infile.open(input_path, std::ios::binary);
-
 	std::cout << "Opening files" << std::endl;
 	outfile.open(output_path, std::ios::binary | std::ios::trunc);
 	std::cout << "File size: " << file_size << std::endl;
 
 	if (!infile.is_open() || !outfile.is_open()) {
 		std::cerr << "Error opening files." << std::endl;
-		return;
+		return 0 ;
 	}
+	return 1 ;
 }
 
 /**
@@ -200,7 +234,7 @@ void CipherSuite::initStreams(const std::string& input_path, const std::string& 
  *
  * @param key Clave utilizada para la operación de cifrado/descifrado.
  */
-void CipherSuite::runThreads(byte* key) {
+unsigned int CipherSuite::runThreads(byte* key) {
 	int max_concurrent_threads = 0;
 
 	size_t block_size, trailing_size;
@@ -241,6 +275,8 @@ void CipherSuite::runThreads(byte* key) {
 			}
 			t_params.threads.clear();
 		}
+
+
 	}
 
 	// Espera a los hilos faltantes (Número de hilos % Thread Pool)
@@ -251,8 +287,8 @@ void CipherSuite::runThreads(byte* key) {
 	}
 
 	t_params.threads.clear();
-
 	std::cout << "Max concurrent threads: " << max_concurrent_threads << std::endl;
+	return 1;
 }
 
 /**
@@ -277,7 +313,6 @@ int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
 		wc_FreeRng(&rng);
 		return ret;
 	}
-
 	wc_FreeRng(&rng);
 	return 0;  // Éxito
 }
