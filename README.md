@@ -8,6 +8,13 @@
 ## Descripción
 Este proyecto se desarrolla bajo la participación del equipo POWERCODERS en el CODEFEST-2024. Se implementa un sistema de comunicación segura entre una estación terrestre y un activo espacial con limitaciones importantes de memoria dinámica utilizando cifrado avanzado y claves precompartidas (PSK). 
 
+## Requisitos del reto
+- ✅ Pruebas y evaluación estática del código (Documento)
+- ✅ Pruebas unitarias (En la rama UnitTests, adicionalmente hay un readme UnitTests.md para ejecutar las pruebas)
+- ✅ Inline comments y documentación
+- ✅ Documento de la solución
+- ✅ Video
+
 ## Estructura del Proyecto
 El repositorio está organizado de la siguiente manera:
 
