@@ -15,7 +15,7 @@
 #include <fstream>
 
 #define THREAD_POOL_SIZE 10
-#define MAX_LOAD_SIZE ((long)300000000 / THREAD_POOL_SIZE)	// 300 MB - Max size of concurrent file processing buffers
+#define MAX_LOAD_SIZE ((long)1500000000 / THREAD_POOL_SIZE)	 // 1.5GB - Max size of concurrent file processing buffers
 #define AUTH_TAG_SIZE 16
 #define IV_SIZE 16
 #define AUTH_IN_SIZE 16
@@ -31,7 +31,7 @@ public:
 	std::ifstream infile;
 	std::ofstream outfile;
 	size_t file_size;
-	//TODO hacer privados métodos y atributos 
+	// TODO hacer privados métodos y atributos
 	struct thread_params {
 		bool encrypt_mode;
 		int threads_to_run;
