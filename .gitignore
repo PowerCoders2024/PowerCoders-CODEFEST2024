@@ -18,3 +18,4 @@
 libraries/*/
 libraries/*.zip
 
+!CMakeLists.txt
