@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests
+CMAKE_SOURCE_DIR = /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build
+CMAKE_BINARY_DIR = /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build
 
 # Include any dependencies generated for this target.
 include CMakeFiles/Google_Tests_run.dir/depend.make
@@ -72,30 +72,30 @@ include CMakeFiles/Google_Tests_run.dir/flags.make
 CMakeFiles/Google_Tests_run.dir/SuiteTests.o: CMakeFiles/Google_Tests_run.dir/flags.make
 CMakeFiles/Google_Tests_run.dir/SuiteTests.o: ../SuiteTests.cpp
 CMakeFiles/Google_Tests_run.dir/SuiteTests.o: CMakeFiles/Google_Tests_run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Google_Tests_run.dir/SuiteTests.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Google_Tests_run.dir/SuiteTests.o -MF CMakeFiles/Google_Tests_run.dir/SuiteTests.o.d -o CMakeFiles/Google_Tests_run.dir/SuiteTests.o -c /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/Google_Tests_run.dir/SuiteTests.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Google_Tests_run.dir/SuiteTests.o -MF CMakeFiles/Google_Tests_run.dir/SuiteTests.o.d -o CMakeFiles/Google_Tests_run.dir/SuiteTests.o -c /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp
 
 CMakeFiles/Google_Tests_run.dir/SuiteTests.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Google_Tests_run.dir/SuiteTests.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp > CMakeFiles/Google_Tests_run.dir/SuiteTests.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp > CMakeFiles/Google_Tests_run.dir/SuiteTests.i
 
 CMakeFiles/Google_Tests_run.dir/SuiteTests.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Google_Tests_run.dir/SuiteTests.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp -o CMakeFiles/Google_Tests_run.dir/SuiteTests.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp -o CMakeFiles/Google_Tests_run.dir/SuiteTests.s
 
 CMakeFiles/Google_Tests_run.dir/ProveTest.o: CMakeFiles/Google_Tests_run.dir/flags.make
 CMakeFiles/Google_Tests_run.dir/ProveTest.o: ../ProveTest.cpp
 CMakeFiles/Google_Tests_run.dir/ProveTest.o: CMakeFiles/Google_Tests_run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Google_Tests_run.dir/ProveTest.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Google_Tests_run.dir/ProveTest.o -MF CMakeFiles/Google_Tests_run.dir/ProveTest.o.d -o CMakeFiles/Google_Tests_run.dir/ProveTest.o -c /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/Google_Tests_run.dir/ProveTest.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/Google_Tests_run.dir/ProveTest.o -MF CMakeFiles/Google_Tests_run.dir/ProveTest.o.d -o CMakeFiles/Google_Tests_run.dir/ProveTest.o -c /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp
 
 CMakeFiles/Google_Tests_run.dir/ProveTest.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Google_Tests_run.dir/ProveTest.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp > CMakeFiles/Google_Tests_run.dir/ProveTest.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp > CMakeFiles/Google_Tests_run.dir/ProveTest.i
 
 CMakeFiles/Google_Tests_run.dir/ProveTest.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Google_Tests_run.dir/ProveTest.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp -o CMakeFiles/Google_Tests_run.dir/ProveTest.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp -o CMakeFiles/Google_Tests_run.dir/ProveTest.s
 
 # Object files for target Google_Tests_run
 Google_Tests_run_OBJECTS = \
@@ -110,9 +110,9 @@ Google_Tests_run: CMakeFiles/Google_Tests_run.dir/ProveTest.o
 Google_Tests_run: CMakeFiles/Google_Tests_run.dir/build.make
 Google_Tests_run: libDateConverter_lib.a
 Google_Tests_run: CMakeFiles/Google_Tests_run.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Google_Tests_run"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable Google_Tests_run"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Google_Tests_run.dir/link.txt --verbose=$(VERBOSE)
-	/usr/bin/cmake -D TEST_TARGET=Google_Tests_run -D TEST_EXECUTABLE=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run -D TEST_EXECUTOR= -D TEST_WORKING_DIR=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=Google_Tests_run_TESTS -D CTEST_FILE=/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P /usr/share/cmake-3.22/Modules/GoogleTestAddTests.cmake
+	/usr/bin/cmake -D TEST_TARGET=Google_Tests_run -D TEST_EXECUTABLE=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run -D TEST_EXECUTOR= -D TEST_WORKING_DIR=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build -D TEST_EXTRA_ARGS= -D TEST_PROPERTIES= -D TEST_PREFIX= -D TEST_SUFFIX= -D TEST_FILTER= -D NO_PRETTY_TYPES=FALSE -D NO_PRETTY_VALUES=FALSE -D TEST_LIST=Google_Tests_run_TESTS -D CTEST_FILE=/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake -D TEST_DISCOVERY_TIMEOUT=5 -D TEST_XML_OUTPUT_DIR= -P /usr/share/cmake-3.22/Modules/GoogleTestAddTests.cmake
 
 # Rule to build all files generated by this target.
 CMakeFiles/Google_Tests_run.dir/build: Google_Tests_run
@@ -123,6 +123,6 @@ CMakeFiles/Google_Tests_run.dir/clean:
 .PHONY : CMakeFiles/Google_Tests_run.dir/clean
 
 CMakeFiles/Google_Tests_run.dir/depend:
-	cd /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles/Google_Tests_run.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles/Google_Tests_run.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/Google_Tests_run.dir/depend
 

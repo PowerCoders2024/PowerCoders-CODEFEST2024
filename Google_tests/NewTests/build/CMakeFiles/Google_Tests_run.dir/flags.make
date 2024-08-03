@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/../..
+CXX_INCLUDES = -I/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/../..
 
 CXX_FLAGS = -std=gnu++20
 

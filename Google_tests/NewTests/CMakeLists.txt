@@ -16,7 +16,6 @@ add_executable(Google_Tests_run
 target_link_libraries(Google_Tests_run
         DateConverter_lib
         gtest
-        gmock
         wolfssl
         pthread
 )

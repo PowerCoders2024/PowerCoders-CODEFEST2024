@@ -8,13 +8,13 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp" "CMakeFiles/Google_Tests_run.dir/ProveTest.o" "gcc" "CMakeFiles/Google_Tests_run.dir/ProveTest.o.d"
-  "/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp" "CMakeFiles/Google_Tests_run.dir/SuiteTests.o" "gcc" "CMakeFiles/Google_Tests_run.dir/SuiteTests.o.d"
+  "/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/ProveTest.cpp" "CMakeFiles/Google_Tests_run.dir/ProveTest.o" "gcc" "CMakeFiles/Google_Tests_run.dir/ProveTest.o.d"
+  "/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp" "CMakeFiles/Google_Tests_run.dir/SuiteTests.o" "gcc" "CMakeFiles/Google_Tests_run.dir/SuiteTests.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles/DateConverter_lib.dir/DependInfo.cmake"
+  "/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles/DateConverter_lib.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

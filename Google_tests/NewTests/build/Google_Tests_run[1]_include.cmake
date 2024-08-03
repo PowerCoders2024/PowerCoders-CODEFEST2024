@@ -1,5 +1,5 @@
-if(EXISTS "/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake")
-  include("/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake")
+if(EXISTS "/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake")
+  include("/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/Google_Tests_run[1]_tests.cmake")
 else()
   add_test(Google_Tests_run_NOT_BUILT Google_Tests_run_NOT_BUILT)
 endif()

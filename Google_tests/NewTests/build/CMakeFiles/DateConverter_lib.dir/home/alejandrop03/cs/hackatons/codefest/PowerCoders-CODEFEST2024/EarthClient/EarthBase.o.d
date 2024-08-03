@@ -1,7 +1,8 @@
-CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
- /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/SuiteTests.cpp \
+CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o: \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.cpp \
  /usr/include/stdc-predef.h \
- /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/../../CipherSuite.h \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.h \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/../CryptoUser/CryptoUser.h \
  /usr/local/include/wolfssl/options.h \
  /usr/local/include/wolfssl/wolfcrypt/aes.h \
  /usr/local/include/wolfssl/wolfcrypt/types.h \
@@ -122,19 +123,8 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/local/include/wolfssl/wolfcrypt/blake2-int.h \
  /usr/local/include/wolfssl/wolfcrypt/sha3.h \
  /usr/local/include/wolfssl/wolfcrypt/md4.h \
- /usr/local/include/wolfssl/wolfcrypt/md2.h \
- /usr/include/c++/11/condition_variable /usr/include/c++/11/chrono \
- /usr/include/c++/11/ratio /usr/include/c++/11/type_traits \
- /usr/include/c++/11/cstdint \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
- /usr/include/x86_64-linux-gnu/bits/wchar.h \
- /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
- /usr/include/c++/11/limits /usr/include/c++/11/ctime \
- /usr/include/c++/11/bits/parse_numbers.h \
- /usr/include/c++/11/ext/numeric_traits.h \
- /usr/include/c++/11/bits/cpp_type_traits.h \
- /usr/include/c++/11/ext/type_traits.h /usr/include/c++/11/concepts \
- /usr/include/c++/11/compare /usr/include/c++/11/bits/std_mutex.h \
+ /usr/local/include/wolfssl/wolfcrypt/md2.h /usr/include/c++/11/cstring \
+ /usr/include/c++/11/filesystem /usr/include/c++/11/bits/fs_fwd.h \
  /usr/include/c++/11/system_error \
  /usr/include/x86_64-linux-gnu/c++/11/bits/error_constants.h \
  /usr/include/c++/11/cerrno /usr/include/errno.h \
@@ -145,6 +135,7 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/include/c++/11/iosfwd /usr/include/c++/11/bits/stringfwd.h \
  /usr/include/c++/11/bits/memoryfwd.h /usr/include/c++/11/bits/postypes.h \
  /usr/include/c++/11/cwchar /usr/include/wchar.h \
+ /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/c++/11/stdexcept /usr/include/c++/11/exception \
@@ -154,11 +145,16 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/include/c++/11/bits/cxxabi_init_exception.h \
  /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/hash_bytes.h \
  /usr/include/c++/11/new /usr/include/c++/11/bits/move.h \
+ /usr/include/c++/11/type_traits \
  /usr/include/c++/11/bits/nested_exception.h /usr/include/c++/11/string \
  /usr/include/c++/11/bits/char_traits.h \
  /usr/include/c++/11/bits/stl_algobase.h \
  /usr/include/c++/11/bits/functexcept.h \
- /usr/include/c++/11/bits/stl_pair.h \
+ /usr/include/c++/11/bits/cpp_type_traits.h \
+ /usr/include/c++/11/ext/type_traits.h \
+ /usr/include/c++/11/ext/numeric_traits.h \
+ /usr/include/c++/11/bits/stl_pair.h /usr/include/c++/11/compare \
+ /usr/include/c++/11/concepts \
  /usr/include/c++/11/bits/stl_iterator_base_types.h \
  /usr/include/c++/11/bits/iterator_concepts.h \
  /usr/include/c++/11/bits/ptr_traits.h \
@@ -169,7 +165,9 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/include/c++/11/bits/stl_iterator.h \
  /usr/include/c++/11/bits/stl_construct.h \
  /usr/include/c++/11/debug/debug.h \
- /usr/include/c++/11/bits/predefined_ops.h \
+ /usr/include/c++/11/bits/predefined_ops.h /usr/include/c++/11/cstdint \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
+ /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
  /usr/include/c++/11/bits/allocator.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
  /usr/include/c++/11/ext/new_allocator.h \
@@ -201,31 +199,48 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/include/c++/11/bits/string_view.tcc \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdio \
  /usr/include/c++/11/bits/charconv.h \
- /usr/include/c++/11/bits/basic_string.tcc \
- /usr/include/c++/11/bits/unique_lock.h \
- /usr/include/c++/11/bits/shared_ptr.h \
- /usr/include/c++/11/bits/shared_ptr_base.h \
- /usr/include/c++/11/bits/allocated_ptr.h \
- /usr/include/c++/11/bits/refwrap.h /usr/include/c++/11/bits/invoke.h \
- /usr/include/c++/11/bits/unique_ptr.h /usr/include/c++/11/utility \
- /usr/include/c++/11/bits/stl_relops.h /usr/include/c++/11/tuple \
- /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
- /usr/include/c++/11/ostream /usr/include/c++/11/ios \
- /usr/include/c++/11/bits/ios_base.h \
+ /usr/include/c++/11/bits/basic_string.tcc /usr/include/c++/11/chrono \
+ /usr/include/c++/11/ratio /usr/include/c++/11/limits \
+ /usr/include/c++/11/ctime /usr/include/c++/11/bits/parse_numbers.h \
+ /usr/include/c++/11/bits/fs_path.h /usr/include/c++/11/utility \
+ /usr/include/c++/11/bits/stl_relops.h /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_classes.h \
  /usr/include/c++/11/bits/locale_classes.tcc \
- /usr/include/c++/11/streambuf /usr/include/c++/11/bits/streambuf.tcc \
- /usr/include/c++/11/bits/basic_ios.h \
  /usr/include/c++/11/bits/locale_facets.h /usr/include/c++/11/cwctype \
  /usr/include/wctype.h /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_base.h \
+ /usr/include/c++/11/bits/ios_base.h /usr/include/c++/11/streambuf \
+ /usr/include/c++/11/bits/streambuf.tcc \
  /usr/include/c++/11/bits/streambuf_iterator.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/ctype_inline.h \
  /usr/include/c++/11/bits/locale_facets.tcc \
+ /usr/include/c++/11/bits/locale_facets_nonio.h \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/11/bits/codecvt.h \
+ /usr/include/c++/11/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/11/bits/locale_conv.h \
+ /usr/include/c++/11/bits/unique_ptr.h /usr/include/c++/11/tuple \
+ /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
+ /usr/include/c++/11/bits/invoke.h /usr/include/c++/11/ostream \
+ /usr/include/c++/11/ios /usr/include/c++/11/bits/basic_ios.h \
  /usr/include/c++/11/bits/basic_ios.tcc \
- /usr/include/c++/11/bits/ostream.tcc \
+ /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/iomanip \
+ /usr/include/c++/11/bits/quoted_string.h /usr/include/c++/11/sstream \
+ /usr/include/c++/11/istream /usr/include/c++/11/bits/istream.tcc \
+ /usr/include/c++/11/bits/sstream.tcc /usr/include/c++/11/codecvt \
+ /usr/include/c++/11/ext/concurrence.h \
+ /usr/include/c++/11/bits/shared_ptr.h \
+ /usr/include/c++/11/bits/shared_ptr_base.h \
+ /usr/include/c++/11/bits/allocated_ptr.h \
+ /usr/include/c++/11/bits/refwrap.h \
  /usr/include/c++/11/ext/aligned_buffer.h \
- /usr/include/c++/11/ext/concurrence.h /usr/include/c++/11/stop_token \
+ /usr/include/c++/11/bits/fs_dir.h /usr/include/c++/11/bits/fs_ops.h \
+ /usr/include/c++/11/iostream \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/../CryptoUser/../CipherSuite.h \
+ /usr/include/c++/11/condition_variable \
+ /usr/include/c++/11/bits/std_mutex.h \
+ /usr/include/c++/11/bits/unique_lock.h /usr/include/c++/11/stop_token \
  /usr/include/c++/11/atomic /usr/include/c++/11/bits/atomic_base.h \
  /usr/include/c++/11/bits/atomic_lockfree_defines.h \
  /usr/include/c++/11/bits/atomic_wait.h /usr/include/c++/11/climits \
@@ -238,92 +253,84 @@ CMakeFiles/Google_Tests_run.dir/SuiteTests.o: \
  /usr/include/c++/11/bits/atomic_timed_wait.h \
  /usr/include/c++/11/bits/this_thread_sleep.h \
  /usr/include/x86_64-linux-gnu/sys/time.h /usr/include/semaphore.h \
- /usr/include/x86_64-linux-gnu/bits/semaphore.h \
- /usr/include/c++/11/filesystem /usr/include/c++/11/bits/fs_fwd.h \
- /usr/include/c++/11/bits/fs_path.h /usr/include/c++/11/locale \
- /usr/include/c++/11/bits/locale_facets_nonio.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h \
- /usr/include/libintl.h /usr/include/c++/11/bits/codecvt.h \
- /usr/include/c++/11/bits/locale_facets_nonio.tcc \
- /usr/include/c++/11/bits/locale_conv.h /usr/include/c++/11/iomanip \
- /usr/include/c++/11/bits/quoted_string.h /usr/include/c++/11/sstream \
- /usr/include/c++/11/istream /usr/include/c++/11/bits/istream.tcc \
- /usr/include/c++/11/bits/sstream.tcc /usr/include/c++/11/codecvt \
- /usr/include/c++/11/bits/fs_dir.h /usr/include/c++/11/bits/fs_ops.h \
- /usr/include/c++/11/iostream /usr/include/c++/11/mutex \
+ /usr/include/x86_64-linux-gnu/bits/semaphore.h /usr/include/c++/11/mutex \
  /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
  /usr/include/c++/11/bits/vector.tcc /usr/include/c++/11/fstream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc /usr/include/gtest/gtest.h \
- /usr/include/c++/11/cstddef /usr/include/c++/11/memory \
- /usr/include/c++/11/bits/stl_raw_storage_iter.h \
- /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
- /usr/include/c++/11/bits/shared_ptr_atomic.h \
- /usr/include/c++/11/backward/auto_ptr.h \
- /usr/include/c++/11/bits/ranges_uninitialized.h \
- /usr/include/c++/11/bits/ranges_algobase.h /usr/include/c++/11/iterator \
- /usr/include/c++/11/bits/stream_iterator.h \
- /usr/include/c++/11/bits/uses_allocator_args.h \
- /usr/include/c++/11/pstl/glue_memory_defs.h \
- /usr/include/c++/11/pstl/execution_defs.h \
- /usr/include/gtest/internal/gtest-internal.h \
- /usr/include/gtest/internal/gtest-port.h \
- /usr/include/gtest/internal/custom/gtest-port.h \
- /usr/include/gtest/internal/gtest-port-arch.h /usr/include/regex.h \
- /usr/include/c++/11/any /usr/include/c++/11/optional \
- /usr/include/c++/11/bits/enable_special_members.h \
- /usr/include/c++/11/variant /usr/include/x86_64-linux-gnu/sys/wait.h \
- /usr/include/signal.h \
- /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
- /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
- /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
- /usr/include/x86_64-linux-gnu/bits/sigaction.h \
- /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
- /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
- /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigstksz.h \
- /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h /usr/include/c++/11/map \
- /usr/include/c++/11/bits/stl_tree.h \
- /usr/include/c++/11/bits/node_handle.h \
- /usr/include/c++/11/bits/stl_map.h \
- /usr/include/c++/11/bits/stl_multimap.h \
- /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/set \
- /usr/include/c++/11/bits/stl_set.h \
- /usr/include/c++/11/bits/stl_multiset.h \
- /usr/include/gtest/gtest-message.h \
- /usr/include/gtest/internal/gtest-filepath.h \
- /usr/include/gtest/internal/gtest-string.h \
- /usr/include/gtest/internal/gtest-type-util.h \
- /usr/include/c++/11/cxxabi.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
- /usr/include/gtest/gtest-death-test.h \
- /usr/include/gtest/internal/gtest-death-test-internal.h \
- /usr/include/gtest/gtest-matchers.h /usr/include/gtest/gtest-printers.h \
- /usr/include/c++/11/functional /usr/include/c++/11/bits/std_function.h \
- /usr/include/c++/11/unordered_map /usr/include/c++/11/bits/hashtable.h \
- /usr/include/c++/11/bits/hashtable_policy.h \
- /usr/include/c++/11/bits/unordered_map.h \
- /usr/include/gtest/internal/custom/gtest-printers.h \
- /usr/include/gtest/gtest-param-test.h \
- /usr/include/gtest/internal/gtest-param-util.h \
- /usr/include/c++/11/cassert /usr/include/assert.h \
- /usr/include/gtest/gtest-test-part.h /usr/include/gtest/gtest_prod.h \
- /usr/include/gtest/gtest-typed-test.h \
- /usr/include/gtest/gtest_pred_impl.h
+ /usr/include/c++/11/bits/fstream.tcc \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/../SpaceServer/Satellite.h \
+ /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/../SpaceServer/../CryptoUser/CryptoUser.h \
+ /usr/local/include/wolfssl/ssl.h /usr/local/include/wolfssl/version.h \
+ /usr/local/include/wolfssl/wolfcrypt/asn_public.h \
+ /usr/local/include/wolfssl/wolfcrypt/dsa.h \
+ /usr/local/include/wolfssl/wolfcrypt/error-crypt.h \
+ /usr/local/include/wolfssl/wolfcrypt/logging.h \
+ /usr/local/include/wolfssl/wolfcrypt/pkcs12.h \
+ /usr/local/include/wolfssl/openssl/compat_types.h \
+ /usr/local/include/wolfssl/wolfcrypt/hmac.h \
+ /usr/local/include/wolfssl/wolfcrypt/cryptocb.h \
+ /usr/local/include/wolfssl/wolfcrypt/rsa.h \
+ /usr/local/include/wolfssl/wolfcrypt/des3.h \
+ /usr/local/include/wolfssl/wolfcrypt/ed25519.h \
+ /usr/local/include/wolfssl/wolfcrypt/curve25519.h \
+ /usr/local/include/wolfssl/wolfcrypt/fe_operations.h \
+ /usr/local/include/wolfssl/callbacks.h \
+ /usr/local/include/wolfssl/openssl/bn.h \
+ /usr/local/include/wolfssl/openssl/rsa.h \
+ /usr/local/include/wolfssl/openssl/err.h \
+ /usr/local/include/wolfssl/openssl/hmac.h \
+ /usr/local/include/wolfssl/openssl/opensslv.h \
+ /usr/local/include/wolfssl/openssl/cmac.h \
+ /usr/local/include/wolfssl/wolfio.h /usr/include/fcntl.h \
+ /usr/include/x86_64-linux-gnu/bits/fcntl.h \
+ /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h \
+ /usr/include/linux/falloc.h /usr/include/x86_64-linux-gnu/sys/socket.h \
+ /usr/include/x86_64-linux-gnu/bits/socket.h \
+ /usr/include/x86_64-linux-gnu/bits/socket_type.h \
+ /usr/include/x86_64-linux-gnu/bits/sockaddr.h \
+ /usr/include/x86_64-linux-gnu/asm/socket.h \
+ /usr/include/asm-generic/socket.h \
+ /usr/include/x86_64-linux-gnu/asm/sockios.h \
+ /usr/include/asm-generic/sockios.h \
+ /usr/include/x86_64-linux-gnu/bits/types/struct_osockaddr.h \
+ /usr/include/arpa/inet.h /usr/include/netinet/in.h \
+ /usr/include/x86_64-linux-gnu/bits/in.h \
+ /usr/local/include/wolfssl/wolfcrypt/asn.h \
+ /usr/local/include/wolfssl/wolfcrypt/dh.h \
+ /usr/include/x86_64-linux-gnu/sys/uio.h \
+ /usr/include/x86_64-linux-gnu/bits/uio-ext.h \
+ /usr/local/include/wolfssl/wolfcrypt/kdf.h \
+ /usr/local/include/wolfssl/openssl/asn1.h \
+ /usr/local/include/wolfssl/openssl/ssl.h \
+ /usr/local/include/wolfssl/openssl/tls1.h \
+ /usr/local/include/wolfssl/openssl/evp.h \
+ /usr/local/include/wolfssl/openssl/md4.h \
+ /usr/local/include/wolfssl/openssl/md5.h \
+ /usr/local/include/wolfssl/openssl/sha.h \
+ /usr/local/include/wolfssl/openssl/sha3.h \
+ /usr/local/include/wolfssl/openssl/ripemd.h \
+ /usr/local/include/wolfssl/openssl/dsa.h \
+ /usr/local/include/wolfssl/openssl/ec.h \
+ /usr/local/include/wolfssl/openssl/dh.h \
+ /usr/local/include/wolfssl/wolfcrypt/arc4.h \
+ /usr/local/include/wolfssl/wolfcrypt/chacha20_poly1305.h \
+ /usr/local/include/wolfssl/wolfcrypt/chacha.h \
+ /usr/local/include/wolfssl/wolfcrypt/poly1305.h \
+ /usr/local/include/wolfssl/wolfcrypt/pwdbased.h \
+ /usr/local/include/wolfssl/wolfcrypt/coding.h \
+ /usr/local/include/wolfssl/openssl/objects.h \
+ /usr/local/include/wolfssl/openssl/bio.h \
+ /usr/local/include/wolfssl/openssl/crypto.h \
+ /usr/local/include/wolfssl/openssl/conf.h \
+ /usr/local/include/wolfssl/openssl/x509.h \
+ /usr/local/include/wolfssl/openssl/ecdsa.h \
+ /usr/local/include/wolfssl/openssl/pkcs7.h \
+ /usr/local/include/wolfssl/wolfcrypt/pkcs7.h \
+ /usr/local/include/wolfssl/wolfcrypt/wc_encrypt.h \
+ /usr/local/include/wolfssl/openssl/pem.h \
+ /usr/local/include/wolfssl/error-ssl.h /usr/local/include/wolfssl/quic.h \
+ /usr/local/include/wolfssl/openssl/stack.h

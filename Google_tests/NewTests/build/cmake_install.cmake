@@ -1,4 +1,4 @@
-# Install script for directory: /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests
+# Install script for directory: /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

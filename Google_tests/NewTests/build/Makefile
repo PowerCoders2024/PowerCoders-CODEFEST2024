@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests
+CMAKE_SOURCE_DIR = /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build
+CMAKE_BINARY_DIR = /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -97,9 +97,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/Google_tests/NewTests/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -183,64 +183,64 @@ SuiteTests.s:
 .PHONY : SuiteTests.s
 
 # target to build an object file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.o
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.o
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.o
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.o
 
 # target to preprocess a source file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.i
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.i
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.i
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.i
 
 # target to generate assembly for a file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.s
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.s
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.s
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.s
 
 # target to build an object file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o
 
 # target to preprocess a source file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i
 
 # target to generate assembly for a file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s
 
 # target to build an object file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o
 
 # target to preprocess a source file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i
 
 # target to generate assembly for a file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s
 
 # target to build an object file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o
 
 # target to preprocess a source file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i
 
 # target to generate assembly for a file
-home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s
-.PHONY : home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s
+home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/DateConverter_lib.dir/build.make CMakeFiles/DateConverter_lib.dir/home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s
+.PHONY : home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s
 
 # Help Target
 help:
@@ -259,18 +259,18 @@ help:
 	@echo "... SuiteTests.o"
 	@echo "... SuiteTests.i"
 	@echo "... SuiteTests.s"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.o"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.i"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CipherSuite.s"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i"
-	@echo "... home/danny/CLionProjects/CodeFestConfig/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.o"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.i"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CipherSuite.s"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.o"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.i"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/CryptoUser/CryptoUser.s"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.o"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.i"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/EarthClient/EarthBase.s"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.o"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.i"
+	@echo "... home/alejandrop03/cs/hackatons/codefest/PowerCoders-CODEFEST2024/SpaceServer/Satellite.s"
 .PHONY : help
 
 
