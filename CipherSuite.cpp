@@ -32,7 +32,7 @@ void CipherSuite::initializeCipherSuite() {
 void CipherSuite::keyGenerator(ecc_key& key) {
 	wc_ecc_init(&key);
 	wc_ecc_set_rng(&key, &this->rng);
-	wc_ecc_make_key(&this->rng, 8, &key);  // Danny cambio de 32 a 8
+	wc_ecc_make_key(&this->rng, 8, &key);  
 }
 
 /**
@@ -253,31 +253,4 @@ void CipherSuite::runThreads(byte* key) {
 	t_params.threads.clear();
 
 	std::cout << "Max concurrent threads: " << max_concurrent_threads << std::endl;
-}
-
-/**
- * @brief Genera una clave PSK (Pre-Shared Key).
- *
- * @param pskKey Buffer donde se almacenará la clave PSK generada.
- * @param keySize Tamaño de la clave PSK.
- * @return int 0 si la generación de la clave PSK fue exitosa, otro valor en caso de error.
- */
-int CipherSuite::PSKKeyGenerator(byte* pskKey, int keySize) {
-	WC_RNG rng;
-
-	int ret = wc_InitRng(&rng);
-	if (ret != 0) {
-		printf("Error initializing RNG: %d\n", ret);
-		return ret;
-	}
-
-	ret = wc_RNG_GenerateBlock(&rng, pskKey, keySize);
-	if (ret != 0) {
-		printf("Error generating PSK key: %d\n", ret);
-		wc_FreeRng(&rng);
-		return ret;
-	}
-
-	wc_FreeRng(&rng);
-	return 0;  // Éxito
 }

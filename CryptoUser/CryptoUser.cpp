@@ -2,17 +2,13 @@
 
 #include "../CipherSuite.h"
 
-
-byte CryptoUser::pskKey[16] = {0};
-
+// TODO: Iniciar valores estaticos: Primo, Semilla , Modificar PSK
+byte CryptoUser::pskKey[16] = {0} ;
+byte CryptoUser::prime[256] = {0} ;
+byte CryptoUser::seed[32] = {0} ;
 
 CryptoUser::CryptoUser() {
-	// std::cout << "Claves generadas correctamente" << std::endl;
-	// this->cipher_suite.keyGenerator(this->priv );
-	// Generar PSK si no se ha generado aún
-	if (pskKey[0] == 0) {
-		this->cipher_suite.PSKKeyGenerator(pskKey, sizeof(pskKey));
-	}
+	
 }
 
 /**
@@ -40,6 +36,7 @@ ecc_key CryptoUser::getPub() const { return this->priv; }
 void CryptoUser::setKeySession(ecc_key userPub) {
 	std::cout << keySessionSz << std::endl;
 	std::cout << "Shared key:" << wc_ecc_shared_secret(&priv, &userPub, this->keySession, &this->keySessionSz) << std::endl;
+
 	// Copia a la llave de la session los ultimos 16 bytes
 	memcpy(keySession + 16, pskKey, 16);
 }

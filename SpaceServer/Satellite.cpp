@@ -1,6 +1,10 @@
 #include "Satellite.h"
 
+#include <iostream>
+#include <string>
+#include <algorithm>
 #include <wolfssl/ssl.h>
+
 
 Satellite::Satellite() : CryptoUser() {}
 
@@ -9,76 +13,108 @@ Satellite::Satellite() : CryptoUser() {}
  **/
 unsigned int Satellite::initializeSatellite()
 {
-	wolfSSL_Init();
-	this->ssl = nullptr;
-	WOLFSSL_CTX *ctx = nullptr;
-
-	// Crear contexto y método
-	WOLFSSL_METHOD *method = wolfTLS_server_method();
-	if (method == nullptr)
-	{
-		std::cerr << "Error iniciando el metodo WOLFSSL" << std::endl;
-		return 0;
+	// TODO: Iniciar el initRNG para el numero aleatorio
+	std::cout << "Satelite inicializado ";
+	WC_RNG rng;
+	if (wc_InitRng(&rng) != 0) {
+		std::cerr << "Error al inicializar el RNG" << std::endl;
+		return 1;
 	}
 
-	ctx = wolfSSL_CTX_new(method);
-	if (ctx == nullptr)
-	{
-		std::cerr << "Error iniciando CTX sesion" << std::endl;
-		return 0;
+	if (wc_RNG_GenerateBlock(&rng, randomBlock, 4) != 0) {
+		std::cerr << "Error al generar números aleatorios" << std::endl;
+		wc_FreeRng(&rng);
+		return 1;
 	}
 
-	// Configurar el PSK identity hints
-	int retMemHint = wolfSSL_CTX_use_psk_identity_hint(ctx, serverHint);
-	wolfSSL_CTX_set_cipher_list(ctx, "PSK-AES128-CBC-SHA256");
-	if (retMemHint == SSL_SUCCESS)
-	{
-		std::cout << "Hint guardado en memoria correctamente" << std::endl;
-		std::cout << "Hint: " << this->serverHint << std::endl;
-	}
-	else
-	{
-		std::cerr << "El hint No se guardo en memoria" << std::endl;
-	}
+	wc_FreeRng(&rng);
 
-	this->ssl = wolfSSL_new(ctx);
-	printf("%p", this->ssl); // Fix: Change the argument to a valid format
-							 // specifier for a pointer
-	if (this->ssl == nullptr)
-	{
-		std::cerr << "Error creando la nueva sesión SSL" << std::endl;
-		wolfSSL_CTX_free(ctx);
-		return 0;
-	}
-
-	return 1;
+	return 0;
 }
 
 
-/**
- * @brief Verifica la identidad del cliente.
- *
- * @param ssl Estructura WOLFSSL para la comunicación.
- * @param identity Identidad del cliente.
- * @return unsigned int Tamaño de la clave PSK si la identidad es verificada, 0 en caso contrario.
- */
-unsigned int Satellite::verifyClientIdentity(WOLFSSL *ssl, const char *identity)
+unsigned int Satellite::sendEncryptedParams()
 {
-	if (identity == nullptr)
-	{
-		return 0;
+	std::cout << std::endl;
+	int secretRandom;
+	std::memcpy(&secretRandom, randomBlock, sizeof(int));
+	std::cout << "Secret Random: " << secretRandom << std::endl;
+    // TODO: Leer el primo del archivo para psarlo por paramtro
+	std::string multipliedPrime = multiplyLargeNumber("1", abs(secretRandom));
+	encryptPreParams(multipliedPrime);
+
+
+	return 0;
+}
+unsigned int Satellite::encryptPreParams(std::string secretRandom) {
+
+	byte* plaintext = new byte[secretRandom.size()];
+	std::memcpy(plaintext, secretRandom.c_str(), secretRandom.size());
+	int plaintextLen = secretRandom.size()  ;
+
+	byte iv[12];
+	WC_RNG rngIv;
+	wc_InitRng(&rngIv);
+	wc_RNG_GenerateBlock(&rngIv, iv, 12);
+	byte ciphertext[plaintextLen];
+	byte authTag[16];
+
+	Aes aes;
+	if (wc_AesGcmSetKey(&aes, pskKey, sizeof(pskKey)) != 0) {
+		std::cerr << "Error al establecer la clave AES-GCM" << std::endl;
+		wolfSSL_Cleanup();
+		return -1;
 	}
-	if (std::strcmp(identity, this->client_identity) == 0)
-	{
-		std::cout << "Server: Client ready with PSK identity." << std::endl;
-		std::cout << "Identity: " << identity << std::endl;
-		std::cout << "PSK key: ";
-		for (int i = 0; i < sizeof(this->pskKey); i++)
-		{
-			printf("%02x", pskKey[i]);
-		}
-		printf("\n");
-		return sizeof(this->pskKey);
+
+	if (wc_AesGcmEncrypt(&aes, ciphertext, plaintext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
+		std::cerr << "Error al encriptar los datos" << std::endl;
+		wolfSSL_Cleanup();
+		return -1;
 	}
-	return 0; // No coincide la identidad
+
+
+	byte decryptedText[plaintextLen];
+
+
+	// TODO: Pasar a EathBase
+	// Desencriptar los datos
+	if (wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
+		std::cerr << "Error al desencriptar los datos" << std::endl;
+		wolfSSL_Cleanup();
+		return -1;
+	}
+
+	std::cerr << "DESENCRIPTADO: " << std::endl;
+	// Convertir el array de bytes a un std::string
+	std::string decryptedString(reinterpret_cast<char*>(decryptedText), plaintextLen);
+
+	// Imprimir el string
+	std::cout << "Decrypted text: " << decryptedString << std::endl;
+
+	return 0;
+}
+
+// Función para multiplicar un número grande representado como una cadena por un número entero pequeño (int)
+std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multiplier) {
+    long long carry = 0;
+    std::string result;
+
+    // Multiplicar cada dígito del número grande empezando desde el final
+    for (int i = prime.size() - 1; i >= 0; --i) {
+        int digit = prime[i] - '0';
+        long long product = digit * multiplier + carry;
+        carry = product / 10;
+        result.push_back((product % 10) + '0');
+    }
+
+    // Si queda un acarreo, agregarlo al principio del resultado
+    while (carry) {
+        result.push_back((carry % 10) + '0');
+        carry /= 10;
+    }
+
+    // Invertir el resultado para que quede en el orden correcto
+    reverse(result.begin(), result.end());
+
+    return result;
 }

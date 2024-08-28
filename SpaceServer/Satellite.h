@@ -7,21 +7,20 @@
 
 #include "../CryptoUser/CryptoUser.h"
 
-#include <wolfssl/ssl.h>
 class Satellite : public CryptoUser
 {
 	const char *serverHint = "satellite_identity";
 	const char *client_identity = "earth_identity";
+	byte randomBlock[4];
 
 public:
-	WOLFSSL *ssl;
 
 	Satellite();
 
-	// Inicializar
 	unsigned int initializeSatellite();
-
-	unsigned int verifyClientIdentity(WOLFSSL *ssl, const char *identity);
+	unsigned int sendEncryptedParams();
+	unsigned int encryptPreParams(std::string secretRandom );
+	static std::string multiplyLargeNumber(const std::string &prime, int multiplier);
 };
 
 #endif // SATELLITE_H

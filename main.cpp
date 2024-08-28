@@ -62,52 +62,54 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
 
-	// Empieza la comunicacion
-	std::cout << "Hello, World!" << std::endl;
-	earth_base.initializeEarthBase();
+	// earth_base.initializeEarthBase();
+
+
 	satellite.initializeSatellite();
+	satellite.sendEncryptedParams();
+	
 	// El cliente recibe el hint del servidor
-	unsigned int serverExchangeHint = earth_base.receiveServerHint(satellite);
-
-	// Si el hint recibido es conocido, envia su identidad
-	if (serverExchangeHint > 0) {
-		// El cliente manda su identidad, y el servidor la autentica
-		earth_base.sendIdentity(satellite);
-
-		// Una vez autenticado, empieza la comparticion psk-ECCDH
-		earth_base.initializeCryptoUser();
-		satellite.initializeCryptoUser();
-
-		// Compartir las llaves publicas entre si
-		ecc_key pubEarth = earth_base.getPub();
-		ecc_key pubSat = satellite.getPub();
-
-		// Generar llave de sesion para cada uno
-		earth_base.setKeySession(pubSat);
-		satellite.setKeySession(pubEarth);
-
-		// TODO: escribir las llaves en archivo
-		const std::string filename = "shared_key.bin";
-		std::ofstream file(filename, std::ios::binary);
-		if (!file) {
-			std::cerr << "Error opening file for writing: " << filename << std::endl;
-			return;
-		}
-
-		// Escribir el tamaño y los datos de la clave compartida
-		file.write(reinterpret_cast<const char*>(earth_base.keySession), 32);
-		if (!file) {
-			std::cerr << "Error writing to file: " << filename << std::endl;
-		}
-
-		file.close();
-
-		// Cifrar el contenido del archivo
-		satellite.encryptMessage(satellite.keySession, input_path, output_path);
-		std::cout << "Encryption completed" << std::endl;
-
-		std::cout << "Encrypted image" << std::endl;
-	}
+	// unsigned int serverExchangeHint = earth_base.receiveServerHint(satellite);
+	//
+	// // Si el hint recibido es conocido, envia su identidad
+	// if (serverExchangeHint > 0) {
+	// 	// El cliente manda su identidad, y el servidor la autentica
+	// 	earth_base.sendIdentity(satellite);
+	//
+	// 	// Una vez autenticado, empieza la comparticion psk-ECCDH
+	// 	earth_base.initializeCryptoUser();
+	// 	satellite.initializeCryptoUser();
+	//
+	// 	// Compartir las llaves publicas entre si
+	// 	ecc_key pubEarth = earth_base.getPub();
+	// 	ecc_key pubSat = satellite.getPub();
+	//
+	// 	// Generar llave de sesion para cada uno
+	// 	earth_base.setKeySession(pubSat);
+	// 	satellite.setKeySession(pubEarth);
+	//
+	// 	// TODO: escribir las llaves en archivo
+	// 	const std::string filename = "shared_key.bin";
+	// 	std::ofstream file(filename, std::ios::binary);
+	// 	if (!file) {
+	// 		std::cerr << "Error opening file for writing: " << filename << std::endl;
+	// 		return;
+	// 	}
+	//
+	// 	// Escribir el tamaño y los datos de la clave compartida
+	// 	file.write(reinterpret_cast<const char*>(earth_base.keySession), 32);
+	// 	if (!file) {
+	// 		std::cerr << "Error writing to file: " << filename << std::endl;
+	// 	}
+	//
+	// 	file.close();
+	//
+	// 	// Cifrar el contenido del archivo
+	// 	satellite.encryptMessage(satellite.keySession, input_path, output_path);
+	// 	std::cout << "Encryption completed" << std::endl;
+	//
+	// 	std::cout << "Encrypted image" << std::endl;
+	// }
 }
 
 void decrypt(const std::string& input_path, const std::string& output_path) {
