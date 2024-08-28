@@ -97,8 +97,9 @@ Sigue estos pasos para instalar las dependencias y configurar el entorno de desa
    source pre-compile.sh
    source compile.sh
     ```
-   > [!WARNING]
-   > Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente.
+> [!WARNING] 
+> Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente.
+
 
 ## Instalación manual
 
