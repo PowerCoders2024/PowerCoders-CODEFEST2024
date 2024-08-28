@@ -11,6 +11,10 @@
 *.in
 *.tif
 !PowerCodersLogo.png
+#Exceptions
+!prime2048.txt
+!seed.txt
+
 # Executable files
 *.out
 
