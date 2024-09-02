@@ -2,8 +2,8 @@ CXX = g++
 CXXFLAGS = --optimize=fast -std=c++20 -lwolfssl
 TARGET = main.out
 
-SRCS = $(wildcard *.cpp */*.cpp)
-HEADERS = $(wildcard *.h */*.h)
+SRCS = $(wildcard src/*.cpp src/*/*.cpp)
+HEADERS = $(wildcard src/*.h src/*/*.h)
 OBJS = $(SRCS:.cpp=.o)
 
 $(TARGET): $(OBJS)

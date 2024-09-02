@@ -17,6 +17,7 @@
 
 # Executable files
 *.out
+*.o
 
 #Library files
 libraries/*/
