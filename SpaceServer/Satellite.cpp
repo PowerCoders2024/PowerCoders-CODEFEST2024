@@ -35,7 +35,7 @@ unsigned int Satellite::initializeSatellite()
 
 unsigned int Satellite::sendEncryptedParams()
 {
-	std::cout << std::endl;
+
 	int secretRandom;
 	std::memcpy(&secretRandom, randomBlock, sizeof(int));
 	std::cout << "Secret Random: " << secretRandom << std::endl;
@@ -58,7 +58,7 @@ unsigned int Satellite::encryptPreParams(std::string secretRandom) {
 	wc_RNG_GenerateBlock(&rngIv, iv, 12);
 	byte ciphertext[plaintextLen];
 	byte authTag[16];
-
+	
 	Aes aes;
 	if (wc_AesGcmSetKey(&aes, pskKey, sizeof(pskKey)) != 0) {
 		std::cerr << "Error al establecer la clave AES-GCM" << std::endl;
@@ -72,11 +72,9 @@ unsigned int Satellite::encryptPreParams(std::string secretRandom) {
 		return -1;
 	}
 
-
-	byte decryptedText[plaintextLen];
-
-
+	
 	// TODO: Pasar a EathBase
+	byte decryptedText[plaintextLen];
 	// Desencriptar los datos
 	if (wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
 		std::cerr << "Error al desencriptar los datos" << std::endl;
@@ -98,22 +96,19 @@ unsigned int Satellite::encryptPreParams(std::string secretRandom) {
 std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multiplier) {
     long long carry = 0;
     std::string result;
-
-    // Multiplicar cada dígito del número grande empezando desde el final
+	
     for (int i = prime.size() - 1; i >= 0; --i) {
         int digit = prime[i] - '0';
         long long product = digit * multiplier + carry;
         carry = product / 10;
         result.push_back((product % 10) + '0');
     }
-
-    // Si queda un acarreo, agregarlo al principio del resultado
+	
     while (carry) {
         result.push_back((carry % 10) + '0');
         carry /= 10;
     }
-
-    // Invertir el resultado para que quede en el orden correcto
+	
     reverse(result.begin(), result.end());
 
     return result;

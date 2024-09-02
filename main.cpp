@@ -12,7 +12,6 @@
 void encrypt(const std::string& input_path, const std::string& output_path);
 void decrypt(const std::string& input_path, const std::string& output_path);
 
-// Función para obtener el uso máximo de memoria residente (en kilobytes)
 long getPeakRSS() {
 	struct rusage r_usage;
 	getrusage(RUSAGE_SELF, &r_usage);
@@ -64,10 +63,9 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 
 	// earth_base.initializeEarthBase();
 
-
 	satellite.initializeSatellite();
 	satellite.sendEncryptedParams();
-	
+
 	// El cliente recibe el hint del servidor
 	// unsigned int serverExchangeHint = earth_base.receiveServerHint(satellite);
 	//

@@ -37,14 +37,13 @@ unsigned int EarthBase::sendIdentity(Satellite &satellite)
 }
 
 
-// Comparar dos cadenas numéricas que representan números grandes
 bool isGreaterOrEqual(const std::string &a, const std::string &b) {
     if (a.size() != b.size())
         return a.size() > b.size();
     return a >= b;
 }
 
-// Resta de dos números grandes representados como cadenas
+
 std::string subtractLargeNumbers(const std::string &a, const std::string &b) {
     std::string result;
     int carry = 0;
@@ -63,8 +62,7 @@ std::string subtractLargeNumbers(const std::string &a, const std::string &b) {
         }
         result.push_back(diff + '0');
     }
-
-    // Eliminar ceros iniciales
+    
     while (result.size() > 1 && result.back() == '0') {
         result.pop_back();
     }
@@ -73,7 +71,7 @@ std::string subtractLargeNumbers(const std::string &a, const std::string &b) {
     return result;
 }
 
-// Función para dividir dos números grandes representados como cadenas
+
 std::string divideLargeNumber(const std::string &product, const std::string &primeStr) {
     std::string result;
     std::string current = "";
@@ -81,7 +79,7 @@ std::string divideLargeNumber(const std::string &product, const std::string &pri
     for (char digit : product) {
         current += digit;
 
-        // Eliminar ceros iniciales
+     
         current.erase(0, std::min(current.find_first_not_of('0'), current.size() - 1));
 
         int quotient = 0;
@@ -92,8 +90,7 @@ std::string divideLargeNumber(const std::string &product, const std::string &pri
 
         result.push_back(quotient + '0');
     }
-
-    // Eliminar ceros iniciales del resultado
+    
     result.erase(0, std::min(result.find_first_not_of('0'), result.size() - 1));
 
     return result.empty() ? "0" : result;
