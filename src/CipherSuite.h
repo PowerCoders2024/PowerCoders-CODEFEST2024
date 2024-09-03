@@ -57,7 +57,6 @@ public:
 	void performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);
 	void runThreads(byte* key);
 	void keyGenerator(ecc_key& key);
-	static int PSKKeyGenerator(byte* pskKey, int keySize);
 	void computeNumThreads();
 	void initializeCipherSuite();
 };

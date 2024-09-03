@@ -30,9 +30,7 @@ void CipherSuite::initializeCipherSuite() {
  * @param key Estructura ecc_key donde se almacenará la clave generada.
  */
 void CipherSuite::keyGenerator(ecc_key& key) {
-	wc_ecc_init(&key);
-	wc_ecc_set_rng(&key, &this->rng);
-	wc_ecc_make_key(&this->rng, 8, &key);  
+
 }
 
 /**

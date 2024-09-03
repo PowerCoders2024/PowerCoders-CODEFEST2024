@@ -22,7 +22,7 @@ public:
 	CipherSuite cipher_suite = CipherSuite();
 
 	static byte pskKey[16];
-	static byte prime[256];
+	static std::string prime;
 	static byte seed[32];
 	
 
@@ -33,6 +33,7 @@ public:
 	void setKeySession(ecc_key userPub);
 	void encryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
 	void decryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
+	static std::string readFile(std::string filePath) ;
 };
 
 #endif	// CRYPTOUSER_H

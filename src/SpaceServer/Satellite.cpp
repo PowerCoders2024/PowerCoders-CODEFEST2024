@@ -35,18 +35,23 @@ unsigned int Satellite::initializeSatellite()
 
 unsigned int Satellite::sendEncryptedParams()
 {
-
 	int secretRandom;
 	std::memcpy(&secretRandom, randomBlock, sizeof(int));
 	std::cout << "Secret Random: " << secretRandom << std::endl;
-    // TODO: Leer el primo del archivo para psarlo por paramtro
-	std::string multipliedPrime = multiplyLargeNumber("1", abs(secretRandom));
-	encryptPreParams(multipliedPrime);
-
-
+	// TODO: No esta multiplicando bien
+	std::string multipliedPrime = multiplyLargeNumber(CryptoUser::prime, abs(secretRandom));
+	byte* cipherLargeNumber = new byte[multipliedPrime.size()];
+	// std::cout << multipliedPrime;
+	encryptPreParams(multipliedPrime, cipherLargeNumber);
+	std::cout << cipherLargeNumber << std::endl;
+	writeParams("Prueba.bin",cipherLargeNumber,multipliedPrime.size(), serverHint);
+	readBytes("Prueba.bin",0,multipliedPrime.size());
+	readBytes("Prueba.bin",multipliedPrime.size(),-1);
 	return 0;
 }
-unsigned int Satellite::encryptPreParams(std::string secretRandom) {
+
+
+unsigned int Satellite::encryptPreParams(const std::string& secretRandom, byte* cipheredParams) {
 
 	byte* plaintext = new byte[secretRandom.size()];
 	std::memcpy(plaintext, secretRandom.c_str(), secretRandom.size());
@@ -63,23 +68,27 @@ unsigned int Satellite::encryptPreParams(std::string secretRandom) {
 	if (wc_AesGcmSetKey(&aes, pskKey, sizeof(pskKey)) != 0) {
 		std::cerr << "Error al establecer la clave AES-GCM" << std::endl;
 		wolfSSL_Cleanup();
-		return -1;
+		return 1;
 	}
 
 	if (wc_AesGcmEncrypt(&aes, ciphertext, plaintext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
 		std::cerr << "Error al encriptar los datos" << std::endl;
 		wolfSSL_Cleanup();
-		return -1;
+		return 1;
 	}
 
-	
+	// Apuntar al valor de ciphertext
+	std::memcpy(cipheredParams, ciphertext, plaintextLen); // Copiar el contenido
+
+	return 0;
+
 	// TODO: Pasar a EathBase
 	byte decryptedText[plaintextLen];
 	// Desencriptar los datos
 	if (wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
 		std::cerr << "Error al desencriptar los datos" << std::endl;
 		wolfSSL_Cleanup();
-		return -1;
+		return 1;
 	}
 
 	std::cerr << "DESENCRIPTADO: " << std::endl;
@@ -112,4 +121,67 @@ std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multip
     reverse(result.begin(), result.end());
 
     return result;
+}
+unsigned int Satellite::writeParams( const std::string& filename, const byte* data, std::size_t dataSize, const std::string& str) {
+
+	const byte* strData = reinterpret_cast<const byte*>(str.c_str());
+	std::size_t strSize = str.size();
+
+	std::size_t totalSize = dataSize + strSize;
+	byte* buffer = new byte[totalSize];
+	std::memcpy(buffer, data, dataSize);
+	std::memcpy(buffer + dataSize, strData, strSize);
+
+
+	std::ofstream outFile(filename, std::ios::binary | std::ios::trunc);
+
+	if (!outFile) {
+		std::cerr << "Error: No se pudo abrir el archivo para escribir: " << filename << std::endl;
+		delete[] buffer;
+		return 1;
+	}
+
+	outFile.write(reinterpret_cast<const char*>(buffer), totalSize);
+
+	if (!outFile.good()) {
+		std::cerr << "Error: Hubo un problema al escribir en el archivo." << std::endl;
+		delete[] buffer;
+		return 1;
+	} else {
+		std::cout << "Los datos fueron escritos exitosamente en: " << filename << std::endl;
+	}
+
+	outFile.close();
+	delete[] buffer;
+	return 0;
+}
+
+byte* Satellite::readBytes(std::string filename , size_t initBytes, size_t finalBytes) {
+
+	std::ifstream inputFile(filename, std::ios::binary);
+	if (finalBytes == -1 ) {
+		inputFile.seekg(0, std::ios::end);
+		size_t fileSize = inputFile.tellg();
+		finalBytes = fileSize;
+	}
+	size_t numBytesToRead = finalBytes - initBytes;
+	byte* buffer = new byte[numBytesToRead];
+
+	if (!inputFile) {
+		std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl;
+	}
+
+	inputFile.seekg(initBytes, std::ios::beg);
+	inputFile.read(reinterpret_cast<char*>(buffer), numBytesToRead);
+
+	size_t bytesRead = inputFile.gcount();
+	if (bytesRead < numBytesToRead) {
+		std::cerr << "Advertencia: Solo se leyeron " << bytesRead << " bytes en lugar de " << numBytesToRead << std::endl;
+	} else {
+		std::cout << "Se leyeron los bytes entre " << initBytes << " y " << finalBytes << " correctamente." << std::endl;
+	}
+
+	std::cout << "Readed : " <<  buffer << std::endl;
+
+	return  buffer;
 }

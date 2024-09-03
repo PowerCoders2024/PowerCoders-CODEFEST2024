@@ -18,8 +18,9 @@ long getPeakRSS() {
 	return r_usage.ru_maxrss;  // Valor en kilobytes
 }
 
-EarthBase earth_base;
 Satellite satellite;
+EarthBase earth_base;
+
 
 int main(int argc, char* argv[]) {
 	if (argc != 4) {

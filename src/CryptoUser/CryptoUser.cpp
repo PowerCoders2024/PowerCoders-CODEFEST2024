@@ -4,21 +4,19 @@
 
 // TODO: Iniciar valores estaticos: Primo, Semilla , Modificar PSK
 byte CryptoUser::pskKey[16] = {0} ;
-byte CryptoUser::prime[256] = {0} ;
+std::string CryptoUser::prime = readFile("src/pre-saved-parameters/prime2048.txt");
 byte CryptoUser::seed[32] = {0} ;
 
 CryptoUser::CryptoUser() {
-	
+
+
 }
 
 /**
  * @brief Inicializa la suite de operación 
  */
 void CryptoUser::initializeCryptoUser() {
-	std::cout << "Suite iniciada" << std::endl;
-	this->cipher_suite.initializeCipherSuite();
-	std::cout << "Claves generadas correctamente" << std::endl;
-	this->cipher_suite.keyGenerator(this->priv);
+
 }
 
 /**
@@ -61,4 +59,31 @@ void CryptoUser::encryptMessage(byte key[], const std::string &input_path, const
  */
 void CryptoUser::decryptMessage(byte key[], const std::string &input_path, const std::string &output_path) {
 	this->cipher_suite.performOperation(false, key, input_path, output_path);
+}
+
+std::string CryptoUser::readFile(std::string filePath) {
+
+	// Crear un ifstream para leer el archivo
+	std::ifstream file(filePath);
+
+	// Verificar si el archivo se abrió correctamente
+	if (!file.is_open()) {
+		std::cerr << "Error al abrir el archivo: " << filePath << std::endl;
+	}
+
+	// Crear un stringstream para almacenar el contenido del archivo
+	std::ostringstream oss;
+	oss << file.rdbuf();  // Leer el contenido del archivo en el stringstream
+
+	// Cerrar el archivo
+	file.close();
+
+	// Guardar el contenido del stringstream en un string
+	std::string fileContent = oss.str();
+
+	// Mostrar el contenido del archivo
+
+
+	return  fileContent;
+
 }
