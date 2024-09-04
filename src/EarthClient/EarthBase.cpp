@@ -24,18 +24,23 @@ static void intToByteArray(int value, byte arr[4]) {
  *
  * @return unsigned int Tamaño de la clave PSK si el hint es reconocido, 0 en caso contrario.
  */
-unsigned int EarthBase::receiveServerParams(size_t finalBytesLargeNumber, size_t finalBytesServerHint)
+unsigned int EarthBase::receiveServerParams()
 {
+    byte* readLargeNumberLen = readBytes("Prueba.bin",0,1);
+
+    size_t finalBytesLargeNumber = int((unsigned char)(readLargeNumberLen[3]) << 24 |
+            (unsigned char)(readLargeNumberLen[2]) << 16 |
+            (unsigned char)(readLargeNumberLen[1]) << 8 |
+            (unsigned char)(readLargeNumberLen[0]));
+
     // Desencriptar el primo largo
     byte* iv = readBytes("Prueba.bin",0,12);
     byte* authTag = readBytes("Prueba.bin", 12,12+16);
     byte* cipheredLargeNumber = readBytes("Prueba.bin", 12+16,finalBytesLargeNumber);
     byte* serverHint = readBytes("Prueba.bin", finalBytesLargeNumber,-1);
-    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber -12-16, iv,authTag);
 
-
+    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber -28, iv,authTag);
     std::string randomNumberStr = divideLargeNumber(decipherLargeNumber, getPrime());
-
     int recoveredSecret = std::stoi(randomNumberStr);
     intToByteArray(recoveredSecret, randomNumber);
 
@@ -66,10 +71,15 @@ std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byt
 byte* EarthBase::readBytes(const std::string& filename , size_t initBytes, size_t finalBytes) {
 
     std::ifstream inputFile(filename, std::ios::binary);
+    inputFile.seekg(0, std::ios::end);
+    size_t fileSize = inputFile.tellg();
+
     if (finalBytes == -1 ) {
-        inputFile.seekg(0, std::ios::end);
-        size_t fileSize = inputFile.tellg();
+        finalBytes = fileSize-4;
+    }else if (finalBytes == 1) {
         finalBytes = fileSize;
+        initBytes = finalBytes - 4;
+
     }
     size_t numBytesToRead = finalBytes - initBytes;
     byte* buffer = new byte[numBytesToRead];

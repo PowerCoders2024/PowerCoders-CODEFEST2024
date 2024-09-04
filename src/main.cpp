@@ -78,7 +78,6 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 
 	// El satelite inicializa la conexion
 	satellite.initializeSatellite();
-	size_t sizeLargeNumber, sizeHint;
 	// El satelite  prepara los parametros para que la base genere la llave secreta  derivada
 	satellite.sendEncryptedParams();
 	
@@ -95,7 +94,6 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
                                satelliteSecretKey, KEY_SIZE_256, 10000);
 
 	//TODO: El satelite agrega al archivo la imagen cifrada
-	// La base  recibe los parametros para generar la llave secreta
 
 	// Cifrar el contenido del archivo
 	satellite.encryptMessage(satelliteSecretKey, input_path, output_path);
@@ -107,10 +105,8 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 void decrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
-
-	// TODO: Sacar estos parametros del archivo, de momento va a lanzar un error porque están vacíos
-	size_t sizeLargeNumber, sizeHint;
-	earth_base.receiveServerParams(sizeLargeNumber,sizeHint);
+	// La base  recibe los parametros para generar la llave secreta
+	earth_base.receiveServerParams();
 	byte baseSecretKey[KEY_SIZE_256];
 
 	// La base genera su llave secreta derivada para descifrar la imagen

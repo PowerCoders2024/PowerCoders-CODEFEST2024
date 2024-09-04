@@ -13,7 +13,7 @@ class EarthBase : public CryptoUser
 public:
 	EarthBase();
 	unsigned int initializeEarthBase();
-	unsigned int receiveServerParams(size_t finalBytesLargeNumber, size_t finalBytesServerHint);
+	unsigned int receiveServerParams();
 	static std::string decryptParams(byte ciphertext[], size_t plaintextLen, byte iv[12], byte authTag[16]);
 	byte randomNumber[4];
 
