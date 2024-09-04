@@ -78,12 +78,11 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
 
 	// El satelite inicializa la conexion
 	satellite.initializeSatellite();
-	size_t sizeLargenumber;
-	size_t sizeHint;
+	size_t sizeLargeNumber, sizeHint;
 	// El satelite  prepara los parametros para que la base genere la llave secreta  derivada
-	satellite.sendEncryptedParams(sizeLargenumber, sizeHint);
-	const int outputLen = 32;
-    byte satelliteSecretKey[outputLen];
+	satellite.sendEncryptedParams();
+	
+    byte satelliteSecretKey[KEY_SIZE_256];
 	int secretRandom = byteArrayToInt(satellite.randomBlock);
 	byte recoveredBlock[4];
     intToByteArray(abs(secretRandom) % 10000000, recoveredBlock);
@@ -93,81 +92,38 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
                                Satellite::getSeed().size(),
                                recoveredBlock,
                                sizeof(recoveredBlock),
-                               satelliteSecretKey, outputLen, 10000);
+                               satelliteSecretKey, KEY_SIZE_256, 10000);
 
 	//TODO: El satelite agrega al archivo la imagen cifrada
-	// ....
-	// ....
-	// ....
 	// La base  recibe los parametros para generar la llave secreta
-	earth_base.receiveServerParams(sizeLargenumber,sizeHint );
-	byte baseSecretKey[outputLen];
 
-	// La base genera su llave secreta derivada para descifrar la imagen
-	int secretRandom2 = byteArrayToInt(earth_base.randomNumber);
-	satellite.derivePBKDF2Key(reinterpret_cast<const byte*>(EarthBase::getSeed().c_str()),
-							   EarthBase::getSeed().size(),
-							   earth_base.randomNumber,
-							   sizeof(earth_base.randomNumber),
-							   baseSecretKey, outputLen, 10000);
-
-	// TODO: Se debe descifrar la imagen usando baseSecretKey
-	// ....
-	// ....
-	// ....
-	// 	// TODO: escribir las llaves en archivo
-	// 	const std::string filename = "shared_key.bin";
-	// 	std::ofstream file(filename, std::ios::binary);
-	// 	if (!file) {
-	// 		std::cerr << "Error opening file for writing: " << filename << std::endl;
-	// 		return;
-	// 	}
-	//
-	// 	// Escribir el tamaño y los datos de la clave compartida
-	// 	file.write(reinterpret_cast<const char*>(earth_base.keySession), 32);
-	// 	if (!file) {
-	// 		std::cerr << "Error writing to file: " << filename << std::endl;
-	// 	}
-	//
-	// 	file.close();
-	//
-	// 	// Cifrar el contenido del archivo
-	// 	satellite.encryptMessage(satellite.keySession, input_path, output_path);
-	// 	std::cout << "Encryption completed" << std::endl;
-	//
-	// 	std::cout << "Encrypted image" << std::endl;
-	// }
+	// Cifrar el contenido del archivo
+	satellite.encryptMessage(satelliteSecretKey, input_path, output_path);
+	std::cout << "Encryption completed" << std::endl;
+	std::cout << "Encrypted image" << std::endl; 
+	
 }
 
 void decrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
 
-	byte shared_key[32];
+	// TODO: Sacar estos parametros del archivo, de momento va a lanzar un error porque están vacíos
+	size_t sizeLargeNumber, sizeHint;
+	earth_base.receiveServerParams(sizeLargeNumber,sizeHint);
+	byte baseSecretKey[KEY_SIZE_256];
 
-	std::ifstream file("shared_key.bin", std::ios::binary);
-	if (!file) {
-		std::cerr << "Error opening file for reading: " << "shared_key.bin" << std::endl;
-		return;
-	}
+	// La base genera su llave secreta derivada para descifrar la imagen
+	int secretRandom = byteArrayToInt(earth_base.randomNumber);
+	earth_base.derivePBKDF2Key(reinterpret_cast<const byte*>(EarthBase::getSeed().c_str()),
+							   EarthBase::getSeed().size(),
+							   earth_base.randomNumber,
+							   sizeof(earth_base.randomNumber),
+							   baseSecretKey, KEY_SIZE_256, 10000);
 
-	// Leer el archivo en el buffer de clave compartida
-	file.read(reinterpret_cast<char*>(shared_key), 32);
-	if (!file) {
-		std::cerr << "Error reading from file: " << "shared_key.bin" << std::endl;
+	earth_base.decryptMessage(baseSecretKey, input_path, output_path);
+	std::cout << "Decryption completed" << std::endl;
 
-
-		file.close();
-
-		if (remove("shared_key.bin") != 0) {
-			std::cerr << "Error deleting file: " << "shared_key.bin" << std::endl;
-		} else {
-			std::cout << "File " << "shared_key.bin" << " deleted successfully" << std::endl;
-		}
-
-		earth_base.decryptMessage(shared_key, input_path, output_path);
-		std::cout << "Decryption completed" << std::endl;
-
-		std::cout << "Decrypted image" << std::endl;
-	}
+	std::cout << "Decrypted image" << std::endl;
+	
 }

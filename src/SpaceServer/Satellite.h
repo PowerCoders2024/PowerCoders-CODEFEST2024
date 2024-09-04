@@ -19,7 +19,7 @@ public:
 
 	Satellite();
 	unsigned int initializeSatellite();
-	unsigned int sendEncryptedParams(size_t& sizeLargeNumber, size_t& sizeHint);
+	unsigned int sendEncryptedParams();
 	byte randomBlock[4];
 	
 };

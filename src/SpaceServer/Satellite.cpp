@@ -42,7 +42,8 @@ int byteArrayToInt(const byte arr[4]) {
     }
     return value;
 }
-unsigned int Satellite::sendEncryptedParams(size_t& sizeLargeNumber, size_t& sizeHint )
+
+unsigned int Satellite::sendEncryptedParams()
 {
 
 	int secretRandom = byteArrayToInt(randomBlock);;
@@ -55,11 +56,11 @@ unsigned int Satellite::sendEncryptedParams(size_t& sizeLargeNumber, size_t& siz
 	outFile.close();
 	encryptPreParams(multipliedPrime, cipherLargeNumber);
 
-	sizeLargeNumber = writeParams("Prueba.bin",cipherLargeNumber,multipliedPrime.size()) ;
+	writeParams("Prueba.bin", cipherLargeNumber, multipliedPrime.size()) ;
 	// Convertir el hint a bytes para poder escribirlo en el archivo
 	const byte* serverHintByte = reinterpret_cast<const byte*>(serverHint);
 	size_t byteSize = strlen(serverHint);
-	sizeHint = writeParams("Prueba.bin", serverHintByte, byteSize) ;
+	writeParams("Prueba.bin", serverHintByte, byteSize) ;
 	return 0;
 }
 
@@ -120,6 +121,7 @@ std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multip
     return result;
 }
 
+// TODO: Quitar return
 unsigned int Satellite::writeParams(const std::string& filename, const byte* data, std::size_t dataSize) {
 
 	std::ofstream outFile(filename, std::ios::binary | std::ios::app); // std::ios::app para hacer append

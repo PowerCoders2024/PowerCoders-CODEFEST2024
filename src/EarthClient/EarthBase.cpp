@@ -39,7 +39,6 @@ unsigned int EarthBase::receiveServerParams(size_t finalBytesLargeNumber, size_t
     int recoveredSecret = std::stoi(randomNumberStr);
     intToByteArray(recoveredSecret, randomNumber);
 
-
 	return 0;
 }
 
