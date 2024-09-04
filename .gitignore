@@ -10,16 +10,12 @@
 *.bin
 *.in
 *.tif
-!PowerCodersLogo.png
+
 #Exceptions
+!PowerCodersLogo.png
 !prime2048.txt
 !seed.txt
 
 # Executable files
 *.out
 *.o
-
-#Library files
-libraries/*/
-libraries/*.zip
-

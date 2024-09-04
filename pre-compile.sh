@@ -36,4 +36,6 @@ sudo make install || handle_error "La instalación de wolfSSL falló"
 
 export LD_LIBRARY_PATH=/usr/local/lib || handle_error "No se pudo exportar la variable de entorno LD_LIBRARY_PATH"
 
+cd ../..
+
 success "wolfSSL se ha instalado correctamente!!!"
