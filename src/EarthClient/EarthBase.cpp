@@ -1,10 +1,10 @@
 #include "EarthBase.h"
 #include <wolfssl/ssl.h>
-
 #include <iostream>
 #include <string>
 #include <algorithm>
 
+std::string divideLargeNumber(const std::string &product, const std::string &primeStr);
 EarthBase::EarthBase() : CryptoUser() {}
 
 unsigned int EarthBase::initializeEarthBase()
@@ -13,27 +13,83 @@ unsigned int EarthBase::initializeEarthBase()
 	return 1;
 }
 
-/**
- * @brief Recibe el hint del servidor.
- *
- * @param satellite Objeto Satellite para la comunicación.
- * @return unsigned int Tamaño de la clave PSK si el hint es reconocido, 0 en caso contrario.
- */
-unsigned int EarthBase::receiveServerHint(Satellite &satellite)
-{
-	return 0;
+static void intToByteArray(int value, byte arr[4]) {
+    for (int i = 0; i < 4; ++i) {
+        arr[i] = (value >> (i * 8)) & 0xFF;  
+    }
 }
 
 /**
- * @brief Envía la identidad del cliente al servidor.
+ * @brief Recibe el hint del servidor.
  *
- * @param satellite Objeto Satellite para la comunicación.
- * @return unsigned int 1 si la autenticación PSK fue exitosa, 0 en caso contrario.
+ * @return unsigned int Tamaño de la clave PSK si el hint es reconocido, 0 en caso contrario.
  */
-unsigned int EarthBase::sendIdentity(Satellite &satellite)
+unsigned int EarthBase::receiveServerParams(size_t finalBytesLargeNumber, size_t finalBytesServerHint)
 {
+    // Desencriptar el primo largo
+    byte* iv = readBytes("Prueba.bin",0,12);
+    byte* authTag = readBytes("Prueba.bin", 12,12+16);
+    byte* cipheredLargeNumber = readBytes("Prueba.bin", 12+16,finalBytesLargeNumber);
+    byte* serverHint = readBytes("Prueba.bin", finalBytesLargeNumber,-1);
+    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber -12-16, iv,authTag);
 
-	return 1;
+
+    std::string randomNumberStr = divideLargeNumber(decipherLargeNumber, getPrime());
+
+    int recoveredSecret = std::stoi(randomNumberStr);
+    intToByteArray(recoveredSecret, randomNumber);
+
+
+	return 0;
+}
+
+
+std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byte iv[12], byte authTag[16]) {
+
+    Aes aes;
+    if (wc_AesGcmSetKey(&aes, pskKey, sizeof(pskKey)) != 0) {
+        std::cerr << "Error al establecer la clave AES-GCM" << std::endl;
+        wolfSSL_Cleanup();
+    }
+    byte decryptedText[plaintextLen];
+    if (int pr = wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, 12, authTag, 16, nullptr, 0) != 0) {
+        std::cerr << "Error al desencriptar los datos: " << pr << std::endl;
+        wolfSSL_Cleanup();
+
+    }
+    std::string decryptedString(reinterpret_cast<char*>(decryptedText), plaintextLen);
+
+    return decryptedString;
+
+}
+
+
+byte* EarthBase::readBytes(const std::string& filename , size_t initBytes, size_t finalBytes) {
+
+    std::ifstream inputFile(filename, std::ios::binary);
+    if (finalBytes == -1 ) {
+        inputFile.seekg(0, std::ios::end);
+        size_t fileSize = inputFile.tellg();
+        finalBytes = fileSize;
+    }
+    size_t numBytesToRead = finalBytes - initBytes;
+    byte* buffer = new byte[numBytesToRead];
+
+    if (!inputFile) {
+        std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl;
+    }
+
+    inputFile.seekg(initBytes, std::ios::beg);
+    inputFile.read(reinterpret_cast<char*>(buffer), numBytesToRead);
+
+    size_t bytesRead = inputFile.gcount();
+    if (bytesRead < numBytesToRead) {
+        std::cerr << "Advertencia: Solo se leyeron " << bytesRead << " bytes en lugar de " << numBytesToRead << std::endl;
+    } else {
+        std::cout << "Se leyeron los bytes entre " << initBytes << " y " << finalBytes << " correctamente." << std::endl;
+    }
+
+    return  buffer;
 }
 
 
@@ -79,7 +135,6 @@ std::string divideLargeNumber(const std::string &product, const std::string &pri
     for (char digit : product) {
         current += digit;
 
-     
         current.erase(0, std::min(current.find_first_not_of('0'), current.size() - 1));
 
         int quotient = 0;
@@ -95,5 +150,6 @@ std::string divideLargeNumber(const std::string &product, const std::string &pri
 
     return result.empty() ? "0" : result;
 }
+
 
 

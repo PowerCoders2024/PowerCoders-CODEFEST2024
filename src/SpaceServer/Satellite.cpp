@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <wolfssl/ssl.h>
 
-
 Satellite::Satellite() : CryptoUser() {}
 
 /**
@@ -14,13 +13,11 @@ Satellite::Satellite() : CryptoUser() {}
 unsigned int Satellite::initializeSatellite()
 {
 	// TODO: Iniciar el initRNG para el numero aleatorio
-	std::cout << "Satelite inicializado ";
 	WC_RNG rng;
 	if (wc_InitRng(&rng) != 0) {
 		std::cerr << "Error al inicializar el RNG" << std::endl;
 		return 1;
 	}
-
 	if (wc_RNG_GenerateBlock(&rng, randomBlock, 4) != 0) {
 		std::cerr << "Error al generar números aleatorios" << std::endl;
 		wc_FreeRng(&rng);
@@ -32,24 +29,39 @@ unsigned int Satellite::initializeSatellite()
 	return 0;
 }
 
-
-unsigned int Satellite::sendEncryptedParams()
-{
-	int secretRandom;
-	std::memcpy(&secretRandom, randomBlock, sizeof(int));
-	std::cout << "Secret Random: " << secretRandom << std::endl;
-	// TODO: No esta multiplicando bien
-	std::string multipliedPrime = multiplyLargeNumber(CryptoUser::prime, abs(secretRandom));
-	byte* cipherLargeNumber = new byte[multipliedPrime.size()];
-	// std::cout << multipliedPrime;
-	encryptPreParams(multipliedPrime, cipherLargeNumber);
-	std::cout << cipherLargeNumber << std::endl;
-	writeParams("Prueba.bin",cipherLargeNumber,multipliedPrime.size(), serverHint);
-	readBytes("Prueba.bin",0,multipliedPrime.size());
-	readBytes("Prueba.bin",multipliedPrime.size(),-1);
-	return 0;
+void intToByteArray(int value, byte arr[4]) {
+    for (int i = 0; i < 4; ++i) {
+        arr[i] = (value >> (i * 8)) & 0xFF;
+    }
 }
 
+int byteArrayToInt(const byte arr[4]) {
+    int value = 0;
+    for (int i = 0; i < 4; ++i) {
+        value |= arr[i] << (i * 8);  // Copiamos los bytes en orden little-endian
+    }
+    return value;
+}
+unsigned int Satellite::sendEncryptedParams(size_t& sizeLargeNumber, size_t& sizeHint )
+{
+
+	int secretRandom = byteArrayToInt(randomBlock);;
+	std::memcpy(&secretRandom, randomBlock, sizeof(int));
+	// Multiplicar numero primo grande con el random generado
+	std::string multipliedPrime = multiplyLargeNumber(getPrime(), abs(secretRandom) % 10000000);
+
+	byte* cipherLargeNumber = new byte[multipliedPrime.size()];
+	std::ofstream outFile("Prueba.bin", std::ios::out | std::ios::trunc);
+	outFile.close();
+	encryptPreParams(multipliedPrime, cipherLargeNumber);
+
+	sizeLargeNumber = writeParams("Prueba.bin",cipherLargeNumber,multipliedPrime.size()) ;
+	// Convertir el hint a bytes para poder escribirlo en el archivo
+	const byte* serverHintByte = reinterpret_cast<const byte*>(serverHint);
+	size_t byteSize = strlen(serverHint);
+	sizeHint = writeParams("Prueba.bin", serverHintByte, byteSize) ;
+	return 0;
+}
 
 unsigned int Satellite::encryptPreParams(const std::string& secretRandom, byte* cipheredParams) {
 
@@ -63,7 +75,7 @@ unsigned int Satellite::encryptPreParams(const std::string& secretRandom, byte* 
 	wc_RNG_GenerateBlock(&rngIv, iv, 12);
 	byte ciphertext[plaintextLen];
 	byte authTag[16];
-	
+
 	Aes aes;
 	if (wc_AesGcmSetKey(&aes, pskKey, sizeof(pskKey)) != 0) {
 		std::cerr << "Error al establecer la clave AES-GCM" << std::endl;
@@ -76,29 +88,14 @@ unsigned int Satellite::encryptPreParams(const std::string& secretRandom, byte* 
 		wolfSSL_Cleanup();
 		return 1;
 	}
+	writeParams("Prueba.bin",iv,12) ;
+	writeParams("Prueba.bin",authTag,16);
 
 	// Apuntar al valor de ciphertext
-	std::memcpy(cipheredParams, ciphertext, plaintextLen); // Copiar el contenido
-
+	std::memcpy(cipheredParams, ciphertext, plaintextLen);
 	return 0;
 
-	// TODO: Pasar a EathBase
-	byte decryptedText[plaintextLen];
-	// Desencriptar los datos
-	if (wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, sizeof(iv), authTag, sizeof(authTag), nullptr, 0) != 0) {
-		std::cerr << "Error al desencriptar los datos" << std::endl;
-		wolfSSL_Cleanup();
-		return 1;
-	}
 
-	std::cerr << "DESENCRIPTADO: " << std::endl;
-	// Convertir el array de bytes a un std::string
-	std::string decryptedString(reinterpret_cast<char*>(decryptedText), plaintextLen);
-
-	// Imprimir el string
-	std::cout << "Decrypted text: " << decryptedString << std::endl;
-
-	return 0;
 }
 
 // Función para multiplicar un número grande representado como una cadena por un número entero pequeño (int)
@@ -122,66 +119,22 @@ std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multip
 
     return result;
 }
-unsigned int Satellite::writeParams( const std::string& filename, const byte* data, std::size_t dataSize, const std::string& str) {
 
-	const byte* strData = reinterpret_cast<const byte*>(str.c_str());
-	std::size_t strSize = str.size();
+unsigned int Satellite::writeParams(const std::string& filename, const byte* data, std::size_t dataSize) {
 
-	std::size_t totalSize = dataSize + strSize;
-	byte* buffer = new byte[totalSize];
-	std::memcpy(buffer, data, dataSize);
-	std::memcpy(buffer + dataSize, strData, strSize);
+	std::ofstream outFile(filename, std::ios::binary | std::ios::app); // std::ios::app para hacer append
+    if (!outFile) {
+        std::cerr << "Error: No se pudo abrir el archivo para escribir: " << filename << std::endl;
+        return 1;
+    }
 
-
-	std::ofstream outFile(filename, std::ios::binary | std::ios::trunc);
-
-	if (!outFile) {
-		std::cerr << "Error: No se pudo abrir el archivo para escribir: " << filename << std::endl;
-		delete[] buffer;
-		return 1;
-	}
-
-	outFile.write(reinterpret_cast<const char*>(buffer), totalSize);
-
-	if (!outFile.good()) {
-		std::cerr << "Error: Hubo un problema al escribir en el archivo." << std::endl;
-		delete[] buffer;
-		return 1;
-	} else {
-		std::cout << "Los datos fueron escritos exitosamente en: " << filename << std::endl;
-	}
-
-	outFile.close();
-	delete[] buffer;
-	return 0;
-}
-
-byte* Satellite::readBytes(std::string filename , size_t initBytes, size_t finalBytes) {
-
-	std::ifstream inputFile(filename, std::ios::binary);
-	if (finalBytes == -1 ) {
-		inputFile.seekg(0, std::ios::end);
-		size_t fileSize = inputFile.tellg();
-		finalBytes = fileSize;
-	}
-	size_t numBytesToRead = finalBytes - initBytes;
-	byte* buffer = new byte[numBytesToRead];
-
-	if (!inputFile) {
-		std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl;
-	}
-
-	inputFile.seekg(initBytes, std::ios::beg);
-	inputFile.read(reinterpret_cast<char*>(buffer), numBytesToRead);
-
-	size_t bytesRead = inputFile.gcount();
-	if (bytesRead < numBytesToRead) {
-		std::cerr << "Advertencia: Solo se leyeron " << bytesRead << " bytes en lugar de " << numBytesToRead << std::endl;
-	} else {
-		std::cout << "Se leyeron los bytes entre " << initBytes << " y " << finalBytes << " correctamente." << std::endl;
-	}
-
-	std::cout << "Readed : " <<  buffer << std::endl;
-
-	return  buffer;
+    outFile.write(reinterpret_cast<const char*>(data), dataSize);
+    if (!outFile.good()) {
+        std::cerr << "Error: Hubo un problema al escribir en el archivo." << std::endl;
+        return 1;
+    }
+	std::streampos fileSize = outFile.tellp();
+    outFile.close();
+    // Retornar el tamaño en bytes de la última escritura
+	return static_cast<unsigned int>(fileSize);
 }

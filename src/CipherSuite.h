@@ -5,14 +5,15 @@
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/ecc.h>
 #include <wolfssl/wolfcrypt/types.h>
-
 #include <condition_variable>
 #include <filesystem>
 #include <iostream>
 #include <mutex>
+#include <thread>
 #include <string>
 #include <vector>
 #include <fstream>
+
 
 #define THREAD_POOL_SIZE 10
 #define MAX_LOAD_SIZE ((long)1500000000 / THREAD_POOL_SIZE)	 // 1.5GB - Max size of concurrent file processing buffers
@@ -46,19 +47,13 @@ public:
 		thread_params() {};
 	};
 	thread_params t_params;
-
-	CipherSuite() {
-		std::cout << "Initializing RNG..." << std::endl;
-		wc_InitRng(&this->rng);
-	};
-
+	CipherSuite();
 	void computeBlockSize(size_t& block_size, size_t& trailing_size);
 	void initStreams(const std::string& input_path, const std::string& output_path);
 	void performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);
 	void runThreads(byte* key);
-	void keyGenerator(ecc_key& key);
 	void computeNumThreads();
-	void initializeCipherSuite();
+	
 };
 
 #endif	// CIPHERSUITE_H

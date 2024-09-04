@@ -1,42 +1,30 @@
 #include "CryptoUser.h"
-
 #include "../CipherSuite.h"
+#include <wolfssl/ssl.h>
 
-// TODO: Iniciar valores estaticos: Primo, Semilla , Modificar PSK
+// TODO: Modificar PSK
 byte CryptoUser::pskKey[16] = {0} ;
 std::string CryptoUser::prime = readFile("src/pre-saved-parameters/prime2048.txt");
-byte CryptoUser::seed[32] = {0} ;
+std::string CryptoUser::seed = readFile("src/pre-saved-parameters/seed.txt");
 
 CryptoUser::CryptoUser() {
 
-
 }
 
-/**
- * @brief Inicializa la suite de operación 
- */
-void CryptoUser::initializeCryptoUser() {
-
+const std::string& CryptoUser::getPrime() {
+    return prime;
 }
 
-/**
- * @brief Obtiene la clave pública ECC.
- *
- * @return ecc_key Clave pública ECC.
- */
-ecc_key CryptoUser::getPub() const { return this->priv; }
+const std::string& CryptoUser::getSeed() {
+    return seed;
+}
 
-/**
- * @brief Establece la clave de sesión.
- *
- * @param userPub Clave pública del usuario.
- */
-void CryptoUser::setKeySession(ecc_key userPub) {
-	std::cout << keySessionSz << std::endl;
-	std::cout << "Shared key:" << wc_ecc_shared_secret(&priv, &userPub, this->keySession, &this->keySessionSz) << std::endl;
-
-	// Copia a la llave de la session los ultimos 16 bytes
-	memcpy(keySession + 16, pskKey, 16);
+void CryptoUser::derivePBKDF2Key(const byte* passwordSeed, size_t passwordSeedLen, const byte* saltSeed, size_t saltSeedLen, byte* output, size_t outputLen, int iterations) {
+    // Genera la clave derivada usando PBKDF2
+    int ret = wc_PBKDF2(output, passwordSeed, passwordSeedLen, saltSeed, saltSeedLen, iterations, outputLen, WC_SHA256);
+    if (ret != 0) {
+        std::cerr << "Error en wc_PBKDF2: " << ret << std::endl;
+    }
 }
 
 /**
@@ -63,27 +51,14 @@ void CryptoUser::decryptMessage(byte key[], const std::string &input_path, const
 
 std::string CryptoUser::readFile(std::string filePath) {
 
-	// Crear un ifstream para leer el archivo
 	std::ifstream file(filePath);
-
-	// Verificar si el archivo se abrió correctamente
 	if (!file.is_open()) {
 		std::cerr << "Error al abrir el archivo: " << filePath << std::endl;
 	}
-
-	// Crear un stringstream para almacenar el contenido del archivo
 	std::ostringstream oss;
-	oss << file.rdbuf();  // Leer el contenido del archivo en el stringstream
-
-	// Cerrar el archivo
+	oss << file.rdbuf();
 	file.close();
-
-	// Guardar el contenido del stringstream en un string
 	std::string fileContent = oss.str();
-
-	// Mostrar el contenido del archivo
-
-
 	return  fileContent;
 
 }

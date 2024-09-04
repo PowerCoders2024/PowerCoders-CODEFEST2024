@@ -1,36 +1,10 @@
 #include "CipherSuite.h"
-
-#include <condition_variable>
 #include <cstring>
 #include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <mutex>
-#include <thread>
-#include <vector>
-#include <array>
 
-/**
- * @brief Inicializa el CipherSuite.
- *
- * Esta función inicializa el conjunto de cifrado, asignando un IV (Vector de Inicialización) 
- * predefinido a la instancia del objeto CipherSuite.
- */
-void CipherSuite::initializeCipherSuite() {
-	std::cout << "cipher init" << std::endl;
 
-	// TODO: Cambiar el IV por uno generado aleatoriamente
-	byte ivGen[] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
-	std::memcpy(this->iv, ivGen, 16);
-}
-
-/**
- * @brief Genera una clave ECC.
- *
- * @param key Estructura ecc_key donde se almacenará la clave generada.
- */
-void CipherSuite::keyGenerator(ecc_key& key) {
-
+CipherSuite::CipherSuite() {
+	wc_InitRng(&this->rng);
 }
 
 /**
@@ -123,11 +97,8 @@ void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::str
 	t_params.threads = std::vector<std::thread>(THREAD_POOL_SIZE);
 	wc_AesInit(&aes, NULL, 0);
 	wc_AesGcmSetKey(&aes, key, 32);
-
 	initStreams(input_path, output_path);
-
 	runThreads(key);
-
 	wc_AesFree(&aes);
 	infile.close();
 	outfile.close();

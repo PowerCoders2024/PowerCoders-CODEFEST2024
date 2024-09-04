@@ -4,18 +4,19 @@
 #include "../CryptoUser/CryptoUser.h"
 #include "../SpaceServer/Satellite.h"
 
-#include <wolfssl/ssl.h>
 class EarthBase : public CryptoUser
 {
 	const char *client_identity = "earth_identity";
 	const char *server_hint = "satellite_identity";
+	static byte* readBytes(const std::string& filename ,size_t initBytes, size_t finalBytes);
 
 public:
-	WOLFSSL *ssl;
 	EarthBase();
 	unsigned int initializeEarthBase();
-	unsigned int receiveServerHint(Satellite &satellite);
-	unsigned int sendIdentity(Satellite &satellite);
+	unsigned int receiveServerParams(size_t finalBytesLargeNumber, size_t finalBytesServerHint);
+	static std::string decryptParams(byte ciphertext[], size_t plaintextLen, byte iv[12], byte authTag[16]);
+	byte randomNumber[4];
+
 };
 
 #endif // EARTHBASE_H

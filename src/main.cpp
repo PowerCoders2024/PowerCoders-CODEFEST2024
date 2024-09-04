@@ -58,35 +58,63 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+static int byteArrayToInt(const byte arr[4]) {
+    int value = 0;
+    for (int i = 0; i < 4; ++i) {
+        value |= arr[i] << (i * 8);  // Copiamos los bytes en orden little-endian
+    }
+    return value;
+}
+
+static void intToByteArray(int value, byte arr[4]) {
+    for (int i = 0; i < 4; ++i) {
+        arr[i] = (value >> (i * 8)) & 0xFF;  // Extraemos los bytes en orden little-endian
+    }
+}
+
 void encrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
 
-	// earth_base.initializeEarthBase();
-
+	// El satelite inicializa la conexion
 	satellite.initializeSatellite();
-	satellite.sendEncryptedParams();
+	size_t sizeLargenumber;
+	size_t sizeHint;
+	// El satelite  prepara los parametros para que la base genere la llave secreta  derivada
+	satellite.sendEncryptedParams(sizeLargenumber, sizeHint);
+	const int outputLen = 32;
+    byte satelliteSecretKey[outputLen];
+	int secretRandom = byteArrayToInt(satellite.randomBlock);
+	byte recoveredBlock[4];
+    intToByteArray(abs(secretRandom) % 10000000, recoveredBlock);
 
-	// El cliente recibe el hint del servidor
-	// unsigned int serverExchangeHint = earth_base.receiveServerHint(satellite);
-	//
-	// // Si el hint recibido es conocido, envia su identidad
-	// if (serverExchangeHint > 0) {
-	// 	// El cliente manda su identidad, y el servidor la autentica
-	// 	earth_base.sendIdentity(satellite);
-	//
-	// 	// Una vez autenticado, empieza la comparticion psk-ECCDH
-	// 	earth_base.initializeCryptoUser();
-	// 	satellite.initializeCryptoUser();
-	//
-	// 	// Compartir las llaves publicas entre si
-	// 	ecc_key pubEarth = earth_base.getPub();
-	// 	ecc_key pubSat = satellite.getPub();
-	//
-	// 	// Generar llave de sesion para cada uno
-	// 	earth_base.setKeySession(pubSat);
-	// 	satellite.setKeySession(pubEarth);
-	//
+	// El satelite genera su llave secreta  derivada para cifrar la imagen
+    satellite.derivePBKDF2Key(reinterpret_cast<const byte*>(Satellite::getSeed().c_str()),
+                               Satellite::getSeed().size(),
+                               recoveredBlock,
+                               sizeof(recoveredBlock),
+                               satelliteSecretKey, outputLen, 10000);
+
+	//TODO: El satelite agrega al archivo la imagen cifrada
+	// ....
+	// ....
+	// ....
+	// La base  recibe los parametros para generar la llave secreta
+	earth_base.receiveServerParams(sizeLargenumber,sizeHint );
+	byte baseSecretKey[outputLen];
+
+	// La base genera su llave secreta derivada para descifrar la imagen
+	int secretRandom2 = byteArrayToInt(earth_base.randomNumber);
+	satellite.derivePBKDF2Key(reinterpret_cast<const byte*>(EarthBase::getSeed().c_str()),
+							   EarthBase::getSeed().size(),
+							   earth_base.randomNumber,
+							   sizeof(earth_base.randomNumber),
+							   baseSecretKey, outputLen, 10000);
+
+	// TODO: Se debe descifrar la imagen usando baseSecretKey
+	// ....
+	// ....
+	// ....
 	// 	// TODO: escribir las llaves en archivo
 	// 	const std::string filename = "shared_key.bin";
 	// 	std::ofstream file(filename, std::ios::binary);
@@ -127,23 +155,19 @@ void decrypt(const std::string& input_path, const std::string& output_path) {
 	file.read(reinterpret_cast<char*>(shared_key), 32);
 	if (!file) {
 		std::cerr << "Error reading from file: " << "shared_key.bin" << std::endl;
+
+
+		file.close();
+
+		if (remove("shared_key.bin") != 0) {
+			std::cerr << "Error deleting file: " << "shared_key.bin" << std::endl;
+		} else {
+			std::cout << "File " << "shared_key.bin" << " deleted successfully" << std::endl;
+		}
+
+		earth_base.decryptMessage(shared_key, input_path, output_path);
+		std::cout << "Decryption completed" << std::endl;
+
+		std::cout << "Decrypted image" << std::endl;
 	}
-
-	// Ajustar el tamaño de la clave compartida leída
-	// word32& sharedKeySize = static_cast<word32>(file.gcount());
-
-	file.close();
-
-	if (remove("shared_key.bin") != 0) {
-		std::cerr << "Error deleting file: " << "shared_key.bin" << std::endl;
-	} else {
-		std::cout << "File " << "shared_key.bin" << " deleted successfully" << std::endl;
-	}
-
-	/* earth_base.setKeySession(*pubEarth); */
-
-	earth_base.decryptMessage(shared_key, input_path, output_path);
-	std::cout << "Decryption completed" << std::endl;
-
-	std::cout << "Decrypted image" << std::endl;
 }
