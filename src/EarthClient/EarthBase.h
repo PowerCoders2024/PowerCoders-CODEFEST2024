@@ -11,7 +11,7 @@ class EarthBase : public CryptoUser
 	byte* readBytes(size_t finalBytes) ;
 
 public:
-	EarthBase();
+	EarthBase(const std::string &input_path,const std::string &output_path) ;
 	unsigned int initializeEarthBase();
 	unsigned int receiveServerParams();
 	static std::string decryptParams(byte ciphertext[], size_t plaintextLen, byte iv[12], byte authTag[16]);

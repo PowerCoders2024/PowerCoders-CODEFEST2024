@@ -15,8 +15,8 @@
 class CryptoUser {
 
 public:
-	CipherSuite cipher_suite = CipherSuite();
-	CryptoUser();
+	CipherSuite* cipher_suite = nullptr;
+	CryptoUser(const std::string &input_path,const std::string &output_path);
 	void encryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
 	void decryptMessage(byte key[], const std::string &input_path, const std::string &output_path);
 	static std::string readFile(std::string filePath);

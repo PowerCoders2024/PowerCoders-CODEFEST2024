@@ -6,7 +6,7 @@
 #include <wolfssl/wolfcrypt/aes.h>
 
 std::string divideLargeNumber(const std::string &product, const std::string &primeStr);
-EarthBase::EarthBase() : CryptoUser() {}
+EarthBase::EarthBase(const std::string &input_path,const std::string &output_path) : CryptoUser(input_path, output_path) {}
 
 unsigned int EarthBase::initializeEarthBase()
 {
@@ -30,27 +30,25 @@ unsigned int EarthBase::receiveServerParams()
     
     // Step 0: Leer el tamaño del primo grande
     byte* readLargeNumberLen = readBytes(sizeof(size_t));
+    
     size_t largeNumberLen;
     std::memcpy(&largeNumberLen, reinterpret_cast<const char*>(readLargeNumberLen), sizeof(size_t));
-    std::cout << "Tamano primo largo: " << largeNumberLen << std::endl;
 
-
+    
     // Step 1: Leer parametros para desecriptar el primo grande
     byte* iv = readBytes(12);
     byte* authTag = readBytes(16);
-
     
+
     // Step 2: Leer el primo grande cifrado
     byte* cipheredLargeNumber = readBytes(largeNumberLen);
     
-
+    
     // Step 3: Leer el hint del servidor
     byte* serverHint = readBytes(18);
     
     
     std::string decipherLargeNumber = decryptParams(cipheredLargeNumber, largeNumberLen, iv, authTag);
-
-    std::cout << "Primo largo: " << decipherLargeNumber << std::endl;
 
     std::string randomNumberStr = divideLargeNumber(decipherLargeNumber, getPrime());
 
@@ -84,18 +82,14 @@ std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byt
 
 }
 
-std::ifstream inputFile("prueba.bin", std::ios::binary);
-
 byte* EarthBase::readBytes(size_t size) {
-
-    
     
     byte* buffer = new byte[size];
 
-    inputFile.read(reinterpret_cast<char*>(buffer), size);
-    std::cout << "Tamano leido: " << inputFile.gcount() << std::endl;    
-
     
+    this->cipher_suite->infile.read(reinterpret_cast<char*>(buffer), size);
+    this->cipher_suite->file_size -= size;
+
     return  buffer;
 }
 

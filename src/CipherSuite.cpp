@@ -3,8 +3,9 @@
 #include <filesystem>
 
 
-CipherSuite::CipherSuite() {
+CipherSuite::CipherSuite(const std::string &input_path, const std::string &output_path) {
 	wc_InitRng(&this->rng);
+	initStreams(input_path, output_path);
 }
 
 /**
@@ -97,7 +98,6 @@ void CipherSuite::performOperation(bool encrypt_mode, byte key[], const std::str
 	t_params.threads = std::vector<std::thread>(THREAD_POOL_SIZE);
 	wc_AesInit(&aes, NULL, 0);
 	wc_AesGcmSetKey(&aes, key, 32);
-	initStreams(input_path, output_path);
 	runThreads(key);
 	wc_AesFree(&aes);
 	infile.close();
@@ -154,9 +154,9 @@ void CipherSuite::initStreams(const std::string& input_path, const std::string& 
 
 	infile.open(input_path, std::ios::binary);
 
-	std::cout << "Opening files" << std::endl;
+	std::cout << "Opening files..." << std::endl;
 	outfile.open(output_path, std::ios::binary | std::ios::trunc);
-	std::cout << "File size: " << file_size << std::endl;
+	std::cout << "File size: " << (file_size / 1024) + 1 << "Kb" << std::endl;
 
 	if (!infile.is_open() || !outfile.is_open()) {
 		std::cerr << "Error opening files." << std::endl;

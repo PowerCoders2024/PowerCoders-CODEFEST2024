@@ -47,7 +47,7 @@ public:
 		thread_params() {};
 	};
 	thread_params t_params;
-	CipherSuite();
+	CipherSuite(const std::string &input_path, const std::string &output_path);
 	void computeBlockSize(size_t& block_size, size_t& trailing_size);
 	void initStreams(const std::string& input_path, const std::string& output_path);
 	void performOperation(bool encrypt_mode, byte key[], const std::string& input_path, const std::string& output_path);

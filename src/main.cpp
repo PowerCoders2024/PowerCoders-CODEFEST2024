@@ -18,9 +18,6 @@ long getPeakRSS() {
 	return r_usage.ru_maxrss;  // Valor en kilobytes
 }
 
-Satellite satellite;
-EarthBase earth_base;
-
 
 int main(int argc, char* argv[]) {
 	if (argc != 4) {
@@ -75,7 +72,7 @@ static void intToByteArray(int value, byte arr[4]) {
 void encrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
-
+	Satellite satellite(input_path, output_path);
 	// El satelite inicializa la conexion
 	satellite.initializeSatellite();
 	// El satelite  prepara los parametros para que la base genere la llave secreta  derivada
@@ -106,7 +103,9 @@ void decrypt(const std::string& input_path, const std::string& output_path) {
 	std::cout << "input_path=" << input_path << std::endl;
 	std::cout << "output_path=" << output_path << std::endl;
 	// La base  recibe los parametros para generar la llave secreta
+	EarthBase earth_base(input_path, output_path);
 	earth_base.receiveServerParams();
+	
 	byte baseSecretKey[KEY_SIZE_256];
 
 	// La base genera su llave secreta derivada para descifrar la imagen

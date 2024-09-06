@@ -17,7 +17,7 @@ class Satellite : public CryptoUser
 
 public:
 
-	Satellite();
+	Satellite(const std::string &input_path,const std::string &output_path);
 	unsigned int initializeSatellite();
 	unsigned int sendEncryptedParams();
 	byte randomBlock[4];

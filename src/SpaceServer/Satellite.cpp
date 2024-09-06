@@ -6,7 +6,7 @@
 #include <wolfssl/ssl.h>
 #include <wolfssl/wolfcrypt/aes.h>
 
-Satellite::Satellite() : CryptoUser() {}
+Satellite::Satellite(const std::string &input_path,const std::string &output_path) : CryptoUser(input_path, output_path) {}
 
 /**
  * @brief Inicializa los datos para la operación.
@@ -56,8 +56,6 @@ unsigned int Satellite::sendEncryptedParams()
 	std::string big_num = multiplyLargeNumber(getPrime(), abs(secretRandom) % 10000000);
 	size_t big_num_size = big_num.size();
 
-	std::cout << "Tamano primo grande: " << big_num_size << std::endl;
-	std::cout << "Numero primo grande: " << big_num << std::endl;
 	
 	byte* cipheredLargeNumber = new byte[big_num_size];
 
@@ -140,11 +138,5 @@ std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multip
 }
 
 void Satellite::writeParams(const byte* data, std::size_t dataSize) {
-
-	std::ofstream outFile("prueba.bin", std::ios::binary | std::ios::app); // std::ios::app para hacer append
-
-    outFile.write(reinterpret_cast<const char*>(data), dataSize);
-	std::cout << "Tamano agregado: " << dataSize << std::endl;
-    
-    outFile.close();
+    this->cipher_suite->outfile.write(reinterpret_cast<const char*>(data), dataSize);
 }

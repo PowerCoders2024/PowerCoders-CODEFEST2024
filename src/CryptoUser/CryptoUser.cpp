@@ -7,8 +7,8 @@ byte CryptoUser::pskKey[16] = {0} ;
 std::string CryptoUser::prime = readFile("src/pre-saved-parameters/prime2048.txt");
 std::string CryptoUser::seed = readFile("src/pre-saved-parameters/seed.txt");
 
-CryptoUser::CryptoUser() {
-
+CryptoUser::CryptoUser(const std::string &input_path,const std::string &output_path) {
+	this->cipher_suite = new CipherSuite(input_path, output_path);
 }
 
 const std::string& CryptoUser::getPrime() {
@@ -35,7 +35,7 @@ void CryptoUser::derivePBKDF2Key(const byte* passwordSeed, size_t passwordSeedLe
  * @param output_path Ruta del archivo de salida.
  */
 void CryptoUser::encryptMessage(byte key[], const std::string &input_path, const std::string &output_path) {
-	this->cipher_suite.performOperation(true, key, input_path, output_path);
+	this->cipher_suite->performOperation(true, key, input_path, output_path);
 }
 
 /**
@@ -46,7 +46,7 @@ void CryptoUser::encryptMessage(byte key[], const std::string &input_path, const
  * @param output_path Ruta del archivo de salida.
  */
 void CryptoUser::decryptMessage(byte key[], const std::string &input_path, const std::string &output_path) {
-	this->cipher_suite.performOperation(false, key, input_path, output_path);
+	this->cipher_suite->performOperation(false, key, input_path, output_path);
 }
 
 std::string CryptoUser::readFile(std::string filePath) {
