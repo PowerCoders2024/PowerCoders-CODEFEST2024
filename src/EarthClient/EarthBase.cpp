@@ -26,20 +26,20 @@ static void intToByteArray(int value, byte arr[4]) {
  */
 unsigned int EarthBase::receiveServerParams()
 {
-    byte* readLargeNumberLen = readBytes("Prueba.bin",0,1);
+    
+    byte* readLargeNumberLen = readBytes(8);
 
-    size_t finalBytesLargeNumber = int((unsigned char)(readLargeNumberLen[3]) << 24 |
-            (unsigned char)(readLargeNumberLen[2]) << 16 |
-            (unsigned char)(readLargeNumberLen[1]) << 8 |
-            (unsigned char)(readLargeNumberLen[0]));
+    size_t finalBytesLargeNumber;
+    std::memcpy(&finalBytesLargeNumber, readLargeNumberLen, sizeof(size_t));
 
     // Desencriptar el primo largo
-    byte* iv = readBytes("Prueba.bin",0,12);
-    byte* authTag = readBytes("Prueba.bin", 12,12+16);
-    byte* cipheredLargeNumber = readBytes("Prueba.bin", 12+16,finalBytesLargeNumber);
-    byte* serverHint = readBytes("Prueba.bin", finalBytesLargeNumber,-1);
+    
+    byte* iv = readBytes(12);
+    byte* authTag = readBytes(16);
+    byte* cipheredLargeNumber = readBytes(finalBytesLargeNumber +36);
+    byte* serverHint = readBytes(18);
 
-    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber -28, iv,authTag);
+    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber, iv,authTag);
     std::string randomNumberStr = divideLargeNumber(decipherLargeNumber, getPrime());
     int recoveredSecret = std::stoi(randomNumberStr);
     intToByteArray(recoveredSecret, randomNumber);
@@ -67,36 +67,20 @@ std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byt
 
 }
 
+std::ifstream stream("Prueba.bin", std::ios::binary);
 
-byte* EarthBase::readBytes(const std::string& filename , size_t initBytes, size_t finalBytes) {
+byte* EarthBase::readBytes(size_t length) {
+    
+    byte* buffer = new byte[length];
 
-    std::ifstream inputFile(filename, std::ios::binary);
-    inputFile.seekg(0, std::ios::end);
-    size_t fileSize = inputFile.tellg();
+    
+    size_t bytesRead = stream.gcount();
 
-    if (finalBytes == -1 ) {
-        finalBytes = fileSize-4;
-    }else if (finalBytes == 1) {
-        finalBytes = fileSize;
-        initBytes = finalBytes - 4;
+    stream.read(reinterpret_cast<char*>(buffer), length);
+    
 
-    }
-    size_t numBytesToRead = finalBytes - initBytes;
-    byte* buffer = new byte[numBytesToRead];
 
-    if (!inputFile) {
-        std::cerr << "Error: No se pudo abrir el archivo " << filename << std::endl;
-    }
-
-    inputFile.seekg(initBytes, std::ios::beg);
-    inputFile.read(reinterpret_cast<char*>(buffer), numBytesToRead);
-
-    size_t bytesRead = inputFile.gcount();
-    if (bytesRead < numBytesToRead) {
-        std::cerr << "Advertencia: Solo se leyeron " << bytesRead << " bytes en lugar de " << numBytesToRead << std::endl;
-    } else {
-        std::cout << "Se leyeron los bytes entre " << initBytes << " y " << finalBytes << " correctamente." << std::endl;
-    }
+    std::cout << "Bytes leidos: " << bytesRead << std::endl;
 
     return  buffer;
 }

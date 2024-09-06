@@ -8,7 +8,7 @@ class EarthBase : public CryptoUser
 {
 	const char *client_identity = "earth_identity";
 	const char *server_hint = "satellite_identity";
-	static byte* readBytes(const std::string& filename ,size_t initBytes, size_t finalBytes);
+	byte* readBytes(size_t length);
 
 public:
 	EarthBase();

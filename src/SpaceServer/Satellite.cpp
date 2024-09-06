@@ -51,22 +51,30 @@ unsigned int Satellite::sendEncryptedParams()
 	// Multiplicar numero primo grande con el random generado
 	std::string multipliedPrime = multiplyLargeNumber(getPrime(), abs(secretRandom) % 10000000);
 
+
 	byte* cipherLargeNumber = new byte[multipliedPrime.size()];
 	std::ofstream outFile("Prueba.bin", std::ios::out | std::ios::trunc);
 	outFile.close();
 	
+	size_t cipherLen = multipliedPrime.size();
+	// Convertuir el entero cipherLen a bytes
+	byte cipherBytesLen[8];
+	memcpy(cipherBytesLen, &cipherLen, sizeof cipherLen);	
+	writeParams("Prueba.bin", cipherBytesLen, sizeof(cipherBytesLen));
+	
+	
 	encryptPreParams(multipliedPrime, cipherLargeNumber);
-	unsigned int cipherLen = writeParams("Prueba.bin", cipherLargeNumber, multipliedPrime.size()) ;
+	
+	writeParams("Prueba.bin", cipherLargeNumber, multipliedPrime.size()) ;
+
+	
 	
 	// Convertir el hint a bytes para poder escribirlo en el archivo
 	const byte* serverHintByte = reinterpret_cast<const byte*>(serverHint);
 	size_t byteSize = strlen(serverHint);
 	writeParams("Prueba.bin", serverHintByte, byteSize) ;
 	
-	// Convertuir el entero cipherLen a bytes
-	byte cipherBytesLen[4];
-	memcpy(cipherBytesLen, &cipherLen, sizeof cipherLen);	
-	writeParams("Prueba.bin", cipherBytesLen, sizeof(cipherBytesLen));
+	
 	
 	return 0;
 }
