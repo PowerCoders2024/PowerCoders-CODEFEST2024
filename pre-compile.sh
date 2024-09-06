@@ -22,11 +22,17 @@ success() {
     echo "${GREEN}$1${RESET}"
 }
 
+cd ./libraries
+sudo apt-get install autoconf libtool make execstack
+git clone https://github.com/wolfSSL/wolfssl.git
+mv wolfssl wolfssl-5.7.2
+cd ../
+
 # Cambiar al directorio de wolfSSL
 cd ./libraries/wolfssl-5.7.2 || handle_error "No se pudo cambiar al directorio wolfssl-5.7.2"
 
 info "Configurando wolfSSL..."
-./configure --enable-all || handle_error "La configuración de wolfSSL falló"
+./autogen.sh && ./configure --enable-all || handle_error "La configuración de wolfSSL falló"
 
 info "Compilando wolfSSL..."
 make || handle_error "La compilación de wolfSSL falló"

@@ -66,7 +66,7 @@ La suite de cifrado proporciona métodos para inicializar el cifrado AES-GCM, ge
 
 ### `compile.sh`
 
-Script para compilar el proyecto. Ejecuta los comandos necesarios para construir los archivos objeto y enlazarlos en un ejecutable final.
+Script para compilar el proyecto. Ejecuta los comandos necesarios para construir los archivos objeto y enlazarlos en un ejecutable final. Es una alternativa al make que ya creamos.
 
 ### `main.cpp`
 
@@ -95,7 +95,7 @@ Sigue estos pasos para instalar las dependencias y configurar el entorno de desa
 2. Compila el proyecto usando el script de compilación:
    ```sh
    source pre-compile.sh
-   source compile.sh
+   make
     ```
 > [!WARNING] 
 > Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente.
@@ -108,11 +108,17 @@ En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh`
 1.  Configurar, compilar e instalar wolfSSL:
 
     ```sh
-    cd ./libraries/wolfssl-5.7.2
-    ./configure --enable-all
+    # Instalacion manual wolfssl en libraries
+    cd ./libraries
+    sudo apt-get install autoconf libtool make execstack
+    git clone https://github.com/wolfSSL/wolfssl.git
+    mv wolfssl wolfssl-5.7.2
+    cd wolfssl-5.7.2
+    ./autogen.sh
+    ./configure
     make
-    sudo make install
-    cd ../..
+    make check
+    cd ../
     
     2.Compilar el proyecto:
 
