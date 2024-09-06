@@ -88,7 +88,7 @@ std::ifstream inputFile("prueba.bin", std::ios::binary);
 
 byte* EarthBase::readBytes(size_t size) {
 
-    
+    std::ifstream inputFile("prueba.bin", std::ios::binary);
     
     byte* buffer = new byte[size];
 
