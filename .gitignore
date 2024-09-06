@@ -15,6 +15,7 @@
 !PowerCodersLogo.png
 !prime2048.txt
 !seed.txt
+!../CmakeLists.txt
 
 # Executable files
 *.out
