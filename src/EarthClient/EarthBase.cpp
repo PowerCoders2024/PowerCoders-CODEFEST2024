@@ -88,14 +88,14 @@ std::ifstream inputFile("prueba.bin", std::ios::binary);
 
 byte* EarthBase::readBytes(size_t size) {
 
-    std::ifstream inputFile("prueba.bin", std::ios::binary);
+    
     
     byte* buffer = new byte[size];
 
     inputFile.read(reinterpret_cast<char*>(buffer), size);
     std::cout << "Tamano leido: " << inputFile.gcount() << std::endl;    
 
-    inputFile.close();
+    
     return  buffer;
 }
 
