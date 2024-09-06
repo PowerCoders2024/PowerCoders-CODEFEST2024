@@ -16,7 +16,7 @@
 
 
 #define THREAD_POOL_SIZE 10
-#define MAX_LOAD_SIZE ((long)1500000000 / THREAD_POOL_SIZE)	 // 1.5GB - Max size of concurrent file processing buffers
+#define MAX_LOAD_SIZE ((long)2800000000 / THREAD_POOL_SIZE)	 // 2.8GB - Max size of concurrent file processing buffers
 #define AUTH_TAG_SIZE 16
 #define IV_SIZE 16
 #define AUTH_IN_SIZE 16

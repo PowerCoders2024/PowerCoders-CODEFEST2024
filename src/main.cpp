@@ -88,9 +88,7 @@ void encrypt(const std::string& input_path, const std::string& output_path) {
                                Satellite::getSeed().size(),
                                recoveredBlock,
                                sizeof(recoveredBlock),
-                               satelliteSecretKey, KEY_SIZE_256, 10000);
-
-	//TODO: El satelite agrega al archivo la imagen cifrada
+                               satelliteSecretKey, KEY_SIZE_256, 300);
 
 	// Cifrar el contenido del archivo
 	satellite.encryptMessage(satelliteSecretKey, input_path, output_path);
@@ -114,7 +112,7 @@ void decrypt(const std::string& input_path, const std::string& output_path) {
 							   EarthBase::getSeed().size(),
 							   earth_base.randomNumber,
 							   sizeof(earth_base.randomNumber),
-							   baseSecretKey, KEY_SIZE_256, 10000);
+							   baseSecretKey, KEY_SIZE_256, 300);
 
 	earth_base.decryptMessage(baseSecretKey, input_path, output_path);
 	std::cout << "Decryption completed" << std::endl;
