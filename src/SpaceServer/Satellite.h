@@ -11,9 +11,9 @@ class Satellite : public CryptoUser
 {
 	const char *serverHint = "satellite_identity";
 	const char *client_identity = "earth_identity";
-	static unsigned int  writeParams(const std::string& filename, const byte* data, size_t size );
-	static std::string multiplyLargeNumber(const std::string &prime, int multiplier);
-	static unsigned int encryptPreParams(const std::string& secretRando, byte* cipheredParams);
+	void writeParams(const byte* data, std::size_t dataSize);
+	std::string multiplyLargeNumber(const std::string &prime, int multiplier);
+	unsigned int encryptPreParams(const std::string& secretRando, byte* cipheredParams);
 
 public:
 

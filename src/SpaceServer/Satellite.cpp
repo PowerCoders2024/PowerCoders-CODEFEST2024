@@ -4,6 +4,7 @@
 #include <string>
 #include <algorithm>
 #include <wolfssl/ssl.h>
+#include <wolfssl/wolfcrypt/aes.h>
 
 Satellite::Satellite() : CryptoUser() {}
 
@@ -45,36 +46,38 @@ int byteArrayToInt(const byte arr[4]) {
 
 unsigned int Satellite::sendEncryptedParams()
 {
+	std::ofstream ouFile("prueba.bin", std::ios::out | std::ios::trunc);
+	ouFile.close();
 
-	int secretRandom = byteArrayToInt(randomBlock);;
+	int secretRandom = byteArrayToInt(randomBlock);
 	std::memcpy(&secretRandom, randomBlock, sizeof(int));
+	
 	// Multiplicar numero primo grande con el random generado
-	std::string multipliedPrime = multiplyLargeNumber(getPrime(), abs(secretRandom) % 10000000);
+	std::string big_num = multiplyLargeNumber(getPrime(), abs(secretRandom) % 10000000);
+	size_t big_num_size = big_num.size();
 
-
-	byte* cipherLargeNumber = new byte[multipliedPrime.size()];
-	std::ofstream outFile("Prueba.bin", std::ios::out | std::ios::trunc);
-	outFile.close();
+	std::cout << "Tamano primo grande: " << big_num_size << std::endl;
+	std::cout << "Numero primo grande: " << big_num << std::endl;
 	
-	size_t cipherLen = multipliedPrime.size();
+	byte* cipheredLargeNumber = new byte[big_num_size];
+
 	// Convertuir el entero cipherLen a bytes
-	byte cipherBytesLen[8];
-	memcpy(cipherBytesLen, &cipherLen, sizeof cipherLen);	
-	writeParams("Prueba.bin", cipherBytesLen, sizeof(cipherBytesLen));
-	
-	
-	encryptPreParams(multipliedPrime, cipherLargeNumber);
-	
-	writeParams("Prueba.bin", cipherLargeNumber, multipliedPrime.size()) ;
+	std::vector<char> cipherBytesLen(sizeof(size_t));
+	memcpy(cipherBytesLen.data(), &big_num_size, sizeof(size_t));	
 
+	this->writeParams(reinterpret_cast<const byte*>(cipherBytesLen.data()), sizeof(size_t));
+
+
+	encryptPreParams(big_num, cipheredLargeNumber);
+	
+    
+	this->writeParams(cipheredLargeNumber, big_num_size);
 	
 	
 	// Convertir el hint a bytes para poder escribirlo en el archivo
 	const byte* serverHintByte = reinterpret_cast<const byte*>(serverHint);
 	size_t byteSize = strlen(serverHint);
-	writeParams("Prueba.bin", serverHintByte, byteSize) ;
-	
-	
+	this->writeParams(serverHintByte, byteSize) ;
 	
 	return 0;
 }
@@ -104,8 +107,8 @@ unsigned int Satellite::encryptPreParams(const std::string& secretRandom, byte* 
 		wolfSSL_Cleanup();
 		return 1;
 	}
-	writeParams("Prueba.bin",iv,12) ;
-	writeParams("Prueba.bin",authTag,16);
+	this->writeParams(iv, 12) ;
+	this->writeParams(authTag, 16);
 
 	// Apuntar al valor de ciphertext
 	std::memcpy(cipheredParams, ciphertext, plaintextLen);
@@ -136,22 +139,12 @@ std::string  Satellite::multiplyLargeNumber(const std::string &prime, int multip
     return result;
 }
 
-// TODO: Quitar return
-unsigned int Satellite::writeParams(const std::string& filename, const byte* data, std::size_t dataSize) {
+void Satellite::writeParams(const byte* data, std::size_t dataSize) {
 
-	std::ofstream outFile(filename, std::ios::binary | std::ios::app); // std::ios::app para hacer append
-    if (!outFile) {
-        std::cerr << "Error: No se pudo abrir el archivo para escribir: " << filename << std::endl;
-        return 1;
-    }
+	std::ofstream outFile("prueba.bin", std::ios::binary | std::ios::app); // std::ios::app para hacer append
 
     outFile.write(reinterpret_cast<const char*>(data), dataSize);
-    if (!outFile.good()) {
-        std::cerr << "Error: Hubo un problema al escribir en el archivo." << std::endl;
-        return 1;
-    }
-	std::streampos fileSize = outFile.tellp();
+	std::cout << "Tamano agregado: " << dataSize << std::endl;
+    
     outFile.close();
-    // Retornar el tamaño en bytes de la última escritura
-	return static_cast<unsigned int>(fileSize);
 }

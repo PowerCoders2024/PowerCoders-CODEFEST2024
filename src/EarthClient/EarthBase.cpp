@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <wolfssl/wolfcrypt/aes.h>
 
 std::string divideLargeNumber(const std::string &product, const std::string &primeStr);
 EarthBase::EarthBase() : CryptoUser() {}
@@ -27,20 +28,35 @@ static void intToByteArray(int value, byte arr[4]) {
 unsigned int EarthBase::receiveServerParams()
 {
     
-    byte* readLargeNumberLen = readBytes(8);
+    // Step 0: Leer el tamaño del primo grande
+    byte* readLargeNumberLen = readBytes(sizeof(size_t));
+    size_t largeNumberLen;
+    std::memcpy(&largeNumberLen, reinterpret_cast<const char*>(readLargeNumberLen), sizeof(size_t));
+    std::cout << "Tamano primo largo: " << largeNumberLen << std::endl;
 
-    size_t finalBytesLargeNumber;
-    std::memcpy(&finalBytesLargeNumber, readLargeNumberLen, sizeof(size_t));
 
-    // Desencriptar el primo largo
-    
+    // Step 1: Leer parametros para desecriptar el primo grande
     byte* iv = readBytes(12);
     byte* authTag = readBytes(16);
-    byte* cipheredLargeNumber = readBytes(finalBytesLargeNumber +36);
-    byte* serverHint = readBytes(18);
 
-    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber,finalBytesLargeNumber, iv,authTag);
+    
+    // Step 2: Leer el primo grande cifrado
+    byte* cipheredLargeNumber = readBytes(largeNumberLen);
+    
+
+    // Step 3: Leer el hint del servidor
+    byte* serverHint = readBytes(18);
+    
+    
+    std::string decipherLargeNumber = decryptParams(cipheredLargeNumber, largeNumberLen, iv, authTag);
+
+    std::cout << "Primo largo: " << decipherLargeNumber << std::endl;
+
     std::string randomNumberStr = divideLargeNumber(decipherLargeNumber, getPrime());
+
+    
+    
+
     int recoveredSecret = std::stoi(randomNumberStr);
     intToByteArray(recoveredSecret, randomNumber);
 
@@ -58,6 +74,7 @@ std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byt
     byte decryptedText[plaintextLen];
     if (int pr = wc_AesGcmDecrypt(&aes, decryptedText, ciphertext, plaintextLen, iv, 12, authTag, 16, nullptr, 0) != 0) {
         std::cerr << "Error al desencriptar los datos: " << pr << std::endl;
+        
         wolfSSL_Cleanup();
 
     }
@@ -67,21 +84,18 @@ std::string EarthBase::decryptParams(byte ciphertext[], size_t plaintextLen, byt
 
 }
 
-std::ifstream stream("Prueba.bin", std::ios::binary);
+std::ifstream inputFile("prueba.bin", std::ios::binary);
 
-byte* EarthBase::readBytes(size_t length) {
-    
-    byte* buffer = new byte[length];
+byte* EarthBase::readBytes(size_t size) {
 
     
-    size_t bytesRead = stream.gcount();
-
-    stream.read(reinterpret_cast<char*>(buffer), length);
     
+    byte* buffer = new byte[size];
 
+    inputFile.read(reinterpret_cast<char*>(buffer), size);
+    std::cout << "Tamano leido: " << inputFile.gcount() << std::endl;    
 
-    std::cout << "Bytes leidos: " << bytesRead << std::endl;
-
+    inputFile.close();
     return  buffer;
 }
 

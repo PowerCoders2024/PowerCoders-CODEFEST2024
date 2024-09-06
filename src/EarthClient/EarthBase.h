@@ -8,7 +8,7 @@ class EarthBase : public CryptoUser
 {
 	const char *client_identity = "earth_identity";
 	const char *server_hint = "satellite_identity";
-	byte* readBytes(size_t length);
+	byte* readBytes(size_t finalBytes) ;
 
 public:
 	EarthBase();
