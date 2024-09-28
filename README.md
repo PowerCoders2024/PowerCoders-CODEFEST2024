@@ -72,14 +72,6 @@ Script para compilar el proyecto. Ejecuta los comandos necesarios para construir
 
 Archivo principal del proyecto que coordina la ejecución de las diferentes partes del sistema, incluyendo la inicialización de los componentes y la gestión de la comunicación entre el cliente terrestre y el servidor satelital.
 
-### `makefile`
-
-Archivo utilizado por `make` para construir el proyecto. Define las reglas de compilación y las dependencias entre los archivos fuente y los archivos objeto.
-
-### `pre-compile.sh`
-
-Script de pre-compilación que realiza las tareas previas necesarias antes de la compilación del proyecto (configuración del entorno).
-
 # Instalación
 
 Sigue estos pasos para instalar las dependencias y configurar el entorno de desarrollo:
@@ -91,42 +83,11 @@ Sigue estos pasos para instalar las dependencias y configurar el entorno de desa
    cd PowerCoders-CODEFEST2024
 
    ```
-
-2. Compila el proyecto usando el script de compilación:
-   ```sh
-   source pre-compile.sh
-   make
-    ```
-> [!WARNING] 
-> Es importante que wolfssl-5.7.2 se encuentre en la carpeta `/libraries` para que se pueda compilar correctamente.
-
-
-## Instalación manual
-
-En caso de fallo de los Scripts de construcción y compilación `pre-compile.sh` y `compile.sh` se puede hacer la configuración de entorno manualmente de la siguiente forma:
-
-1.  Configurar, compilar e instalar wolfSSL:
-
+2.   Ejecuta el script para compilar
     ```sh
-    # Instalacion manual wolfssl en libraries
-    cd ./libraries
-    sudo apt-get install autoconf libtool make execstack
-    git clone https://github.com/wolfSSL/wolfssl.git
-    mv wolfssl wolfssl-5.7.2
-    cd wolfssl-5.7.2
-    ./autogen.sh
-    ./configure
-    make
-    make check
-    cd ../
-    
-    2.Compilar el proyecto:
-
-        g++  *.cpp */*.cpp *.h */*.h -o main.out --optimize=fast -std=c++20 -lwolfssl
-
+      ./compile.sh
     ```
-
-2.  Ejecutar el archivo principal:
+4.  Ejecutar el archivo principal:
 
     ```sh
     ./main <instruction> <input path> <output path>
